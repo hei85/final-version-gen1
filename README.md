@@ -4,11 +4,11 @@
 
 ## 下载与启动
 
-打开 [最新完整发行版](https://github.com/hei85/final-version-gen1/releases/latest)。最方便的方式是下载 **一键下载完整软件.cmd**，放进新的短路径文件夹后双击；它会下载全部分卷与官方解压工具，解压后启动完整软件。Windows 10/11 x64可用，建议放在 D:\衍图下载 等短目录。
+打开 [最新完整发行版](https://github.com/hei85/final-version-gen1/releases/latest)。最方便的方式是下载 **Download-Yingce-Full.cmd（完整软件下载器）**，放进新的短路径文件夹后双击；它会下载全部分卷与官方解压工具，解压后启动完整软件。Windows 10/11 x64可用，建议放在 D:\衍图下载 等短目录。
 
 也可以手动下载同一发行版下全部 `yingce-windows-x64-full-20261027.zip.*` 分卷及 `7za.exe`，放到同一目录，从第一卷解压。请不要只下载其中一卷。
 
-从 Code → Download ZIP 得到的是源码、插件与下载器；要直接运行完整软件，请使用上面的发行版或ZIP里的“一键下载完整软件.cmd”。
+从 Code → Download ZIP 得到的是源码、插件与下载器；要直接运行完整软件，请使用上面的发行版或ZIP里的“Download-Yingce-Full.cmd”（“一键下载完整软件.cmd”是同内容的中文副本）。
 
 ## Agent 全自动制作
 
