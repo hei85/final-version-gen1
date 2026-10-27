@@ -1,0 +1,514 @@
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { Check, ChevronDown, ChevronLeft, Coins, Info } from "lucide-react";
+import { Popover } from "antd";
+
+import { canvasThemes, type CanvasTheme } from "@/lib/canvas-theme";
+import { modelCapabilityConfigFor, videoDurationOptions } from "@/lib/model-capabilities";
+import { configuredModelDisplayName, resolveCompatibleModel, type ModelRequirements } from "@/lib/model-selection";
+import { groupModelsForPicker, isDirectSystemModel, modelChannelLabel, resolveModelPickerOption } from "@/lib/model-picker-groups";
+import { cn } from "@/lib/utils";
+import { stripVideoDialogueSummary, videoDialogueSummary } from "@/lib/video-dialogue-observations";
+import { VIDEO_RESOLUTION_DEFAULT_LABEL } from "@/lib/video-generation-options";
+import { modelDisplayName, modelIcon, modelOptionName, resolveModelChannel, selectableModelsByCapability, type AiConfig, type ModelCapability } from "@/stores/use-config-store";
+import { useActiveTheme } from "@/stores/canvas/use-canvas-theme-store";
+import { useUserStore } from "@/stores/use-user-store";
+import { ModelLogo } from "@/components/model-logo";
+
+type ModelPickerProps = {
+    config: AiConfig;
+    value?: string;
+    onChange: (model: string) => void;
+    capability?: ModelCapability;
+    className?: string;
+    popoverClassName?: string;
+    fullWidth?: boolean;
+    placeholder?: string;
+    onMissingConfig?: () => void;
+    showSelectedPrice?: boolean;
+    showOptionPrices?: boolean;
+    variant?: "default" | "creation";
+    requirements?: ModelRequirements;
+    showConfiguredModelName?: boolean;
+    popoverPlacement?: "topLeft" | "bottomLeft";
+};
+
+export function ModelPicker({
+    config,
+    value,
+    onChange,
+    capability,
+    className,
+    popoverClassName,
+    fullWidth = false,
+    placeholder = "选择模型",
+    onMissingConfig,
+    showSelectedPrice = true,
+    showOptionPrices = showSelectedPrice,
+    variant = "creation",
+    requirements,
+    showConfiguredModelName = false,
+    popoverPlacement = "bottomLeft",
+}: ModelPickerProps) {
+    const pickerId = useId();
+    // 双保险：即使 store merge 写出非法 theme，这里也兜底到 dark，避免 "reading 'node'" 崩溃
+    const rawTheme = useActiveTheme();
+    const theme = (canvasThemes[rawTheme as keyof typeof canvasThemes] ?? canvasThemes.dark) as CanvasTheme;
+    const [open, setOpen] = useState(false);
+    const [activeGroupKey, setActiveGroupKey] = useState<string | null>(null);
+    const [previewedModel, setPreviewedModel] = useState("");
+    const [triggerWidth, setTriggerWidth] = useState<number | null>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const options = useMemo(() => Array.from(new Set(selectableModelsByCapability(config, capability).filter(Boolean))), [capability, config]);
+    const optionGroups = useMemo(() => groupModelsForPicker(config, options), [config, options]);
+    const largestGroupSize = optionGroups.reduce((largest, group) => Math.max(largest, group.models.length), 0);
+    const pickerHeight = Math.min(440, Math.max(260, 130 + Math.max(optionGroups.length, largestGroupSize) * 72));
+    const storedCurrent = value?.trim() || "";
+    // 参数档位会在选中模型后由调用方归一到其能力配置，不能因为旧模型留下的参数而禁止切换。
+    const selectionRequirements = requirements ? { ...requirements, videoSeconds: undefined, imageSize: undefined, options: undefined } : undefined;
+    const resolvedCurrent = isDirectSystemModel(config, storedCurrent) ? storedCurrent : resolveCompatibleModel(config, storedCurrent, selectionRequirements) || storedCurrent;
+    // 旧画布可能保存过已下架或前端历史内置模型；它们不能重新进入当前可选目录。
+    const current = options.includes(resolvedCurrent) ? resolvedCurrent : "";
+    const creationVariant = variant === "creation";
+
+    useLayoutEffect(() => {
+        const trigger = triggerRef.current;
+        if (!trigger) return;
+        const updateTriggerWidth = () => setTriggerWidth(Math.ceil(trigger.getBoundingClientRect().width));
+        updateTriggerWidth();
+        const observer = new ResizeObserver(updateTriggerWidth);
+        observer.observe(trigger);
+        return () => observer.disconnect();
+    }, [className, fullWidth, showSelectedPrice, variant, value]);
+
+    useEffect(() => {
+        const closeOtherPicker = (event: Event) => {
+            if ((event as CustomEvent<string>).detail !== pickerId) setOpen(false);
+        };
+        window.addEventListener("model-picker-open", closeOtherPicker);
+        return () => window.removeEventListener("model-picker-open", closeOtherPicker);
+    }, [pickerId]);
+
+    useEffect(() => {
+        if (!open) return;
+        // 画布拖拽从 pointerdown 开始，须在捕获阶段关闭 Portal 菜单，避免菜单与触发器分离。
+        const closeOnOutsidePointer = (event: PointerEvent) => {
+            const target = event.target;
+            if (!(target instanceof Node)) return;
+            if (triggerRef.current?.contains(target) || menuRef.current?.contains(target)) return;
+            setOpen(false);
+        };
+        window.addEventListener("pointerdown", closeOnOutsidePointer, true);
+        return () => window.removeEventListener("pointerdown", closeOnOutsidePointer, true);
+    }, [open]);
+
+    const setPickerOpen = (nextOpen: boolean) => {
+        if (nextOpen && !options.length) onMissingConfig?.();
+        if (nextOpen) window.dispatchEvent(new CustomEvent("model-picker-open", { detail: pickerId }));
+        if (nextOpen) {
+            setPreviewedModel(current || options[0] || "");
+            // A single channel needs no separate channel-selection step.
+            setActiveGroupKey(optionGroups.length === 1 ? optionGroups[0].key : null);
+        }
+        setOpen(nextOpen);
+    };
+    const focusMenuOption = (last = false) => {
+        window.requestAnimationFrame(() => {
+            const buttons = menuRef.current?.querySelectorAll<HTMLButtonElement>('[data-model-picker-item]:not(:disabled)');
+            const target = last ? buttons?.item((buttons?.length || 1) - 1) : buttons?.item(0);
+            target?.focus();
+        });
+    };
+    const handleTriggerKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+        if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+        event.preventDefault();
+        setPickerOpen(true);
+        focusMenuOption(event.key === "ArrowUp");
+    };
+    const handleMenuKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === "Escape") {
+            event.preventDefault();
+            setOpen(false);
+            triggerRef.current?.focus();
+            return;
+        }
+        if (event.key === "ArrowLeft" && activeGroupKey !== null) {
+            event.preventDefault();
+            setActiveGroupKey(null);
+            focusMenuOption();
+            return;
+        }
+        if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+        const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[data-model-picker-item]:not(:disabled)'));
+        if (!buttons.length) return;
+        event.preventDefault();
+        const activeIndex = buttons.indexOf(document.activeElement as HTMLButtonElement);
+        const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? buttons.length - 1 : event.key === "ArrowUp" ? Math.max(0, activeIndex - 1) : Math.min(buttons.length - 1, activeIndex + 1);
+        buttons[nextIndex]?.focus();
+    };
+    const content = (
+        <div
+            ref={menuRef}
+            data-canvas-no-zoom
+            className={cn(
+                "canvas-model-picker-menu creation-model-picker-menu max-w-[calc(100vw-24px)]",
+                activeGroupKey === null ? "is-brand-list" : "is-model-list",
+            )}
+            style={
+                {
+                    background: theme.node.panel,
+                    color: theme.node.text,
+                    "--canvas-model-picker-trigger-width": triggerWidth ? String(triggerWidth) + "px" : undefined,
+                    "--canvas-model-picker-height": `${pickerHeight}px`,
+                } as CSSProperties
+            }
+            role="listbox"
+            aria-label={placeholder}
+            onKeyDown={handleMenuKeyDown}
+            onMouseDown={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
+        >
+            {optionGroups.length ? (
+                activeGroupKey === null ? (
+                    <div className="canvas-model-picker-brands" aria-label="选择产品模型">
+                        {optionGroups.map((group) => {
+                            const groupCurrent = group.models.find((item) => item.models.includes(current));
+                            const firstModel = groupCurrent?.models[0] || group.models[0]?.models[0] || "";
+                            return <button key={group.key} type="button" data-model-picker-item className="canvas-model-picker-brand" onClick={() => { setActiveGroupKey(group.key); setPreviewedModel(firstModel); focusMenuOption(); }}>
+                                <span className="canvas-model-picker-brand-icon"><ModelLogo icon={group.icon} size={22} /></span>
+                                <span className="canvas-model-picker-brand-copy"><strong>{group.label}</strong><small>{group.models.length} 个{group.kind === "product" ? "渠道" : "模型"}{group.scope ? ` · ${group.scope}` : ""}</small></span>
+                                <ChevronDown className="canvas-model-picker-brand-arrow" aria-hidden="true" />
+                            </button>;
+                        })}
+                    </div>
+                ) : <div className="canvas-model-picker-two-pane">
+                    <div className="canvas-model-picker-brand-rail" aria-label="产品模型">
+                        {optionGroups.map((group) => {
+                            const groupCurrent = group.models.find((item) => item.models.includes(current));
+                            const firstModel = groupCurrent?.models[0] || group.models[0]?.models[0] || "";
+                            return <button key={group.key} type="button" className={cn("canvas-model-picker-brand", activeGroupKey === group.key && "is-active")} aria-pressed={activeGroupKey === group.key} onClick={() => { setActiveGroupKey(group.key); setPreviewedModel(firstModel); }}>
+                                <span className="canvas-model-picker-brand-icon"><ModelLogo icon={group.icon} size={22} /></span>
+                                <span className="canvas-model-picker-brand-copy"><strong>{group.label}</strong><small>{group.models.length} 个{group.kind === "product" ? "渠道" : "模型"}{group.scope ? ` · ${group.scope}` : ""}</small></span>
+                                <ChevronDown className="canvas-model-picker-brand-arrow" aria-hidden="true" />
+                            </button>;
+                        })}
+                    </div>
+                    {optionGroups.filter((group) => group.key === activeGroupKey).map((group) => <section key={group.key} className="canvas-model-picker-group canvas-model-picker-model-pane min-w-0 overflow-hidden">
+                        <div className="canvas-model-picker-secondary-head">
+                            {optionGroups.length > 1 ? <button type="button" className="canvas-model-picker-back" onClick={() => { setActiveGroupKey(null); focusMenuOption(); }} aria-label="返回模型列表"><ChevronLeft /></button> : null}
+                            <span><strong>{group.label}</strong>{group.scope ? <small>{group.scope}</small> : null}</span>
+                        </div>
+                        <div className="grid min-w-0 gap-1">
+                            {group.models.map((modelGroup) => {
+                                const selected = modelGroup.models.includes(current);
+                                // 不可用模型必须带具体原因，否则用户只会看到“点不动的暗按钮”。
+                                const { model, displayModel, disabledReason } = resolveModelPickerOption({
+                                    config,
+                                    models: modelGroup.models,
+                                    requirements: selectionRequirements,
+                                    current,
+                                    selected,
+                                });
+                                return (
+                                    <button
+                                        key={modelGroup.key}
+                                        type="button"
+                                        data-model-picker-item
+                                        role="option"
+                                        aria-selected={selected}
+                                        aria-disabled={Boolean(disabledReason)}
+                                        disabled={Boolean(disabledReason)}
+                                        title={disabledReason || pickerModelOptionLabel(config, displayModel, showConfiguredModelName)}
+                                        className={cn("canvas-model-picker-option disabled:cursor-not-allowed disabled:opacity-45", previewedModel === displayModel && "is-previewed")}
+                                        style={{ background: selected ? theme.toolbar.activeBg : "transparent", color: theme.node.text }}
+                                        onMouseEnter={() => setPreviewedModel(displayModel)}
+                                        onFocus={() => setPreviewedModel(displayModel)}
+                                        onClick={() => {
+                                            if (!model) return;
+                                            onChange(model);
+                                            setOpen(false);
+                                            window.requestAnimationFrame(() => triggerRef.current?.focus());
+                                        }}
+                                    >
+                                        <ModelLabel
+                                            config={config}
+                                            model={displayModel}
+                                            capability={capability}
+                                            theme={theme}
+                                            creationVariant
+                                            showConfiguredModelName={showConfiguredModelName}
+                                            label={group.kind === "product" ? modelGroup.label : undefined}
+                                            requirements={requirements}
+                                            showPrice={false}
+                                            disabledReason={disabledReason}
+                                            showDescription={selected || previewedModel === displayModel}
+                                        />
+                                        {selected ? <Check className="canvas-model-picker-option-check ml-1 shrink-0" style={{ color: theme.node.activeStroke }} /> : null}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        <div
+                            className="sticky bottom-0 z-[2] mt-2 flex items-start gap-1.5 border-t border-[var(--workspace-border)] px-2 py-2 text-[var(--fs-tiny)]"
+                            style={{ background: theme.node.panel, color: theme.node.muted }}
+                            role="note"
+                        >
+                            <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+                            <span>灰色模型需先满足名称下方的条件；需要参考图时，先点「+ 参考内容」添加。</span>
+                        </div>
+                    </section>)}
+                </div>
+            ) : (
+                <div className="canvas-model-picker-empty" style={{ color: theme.node.muted }}>
+                    {config.models.length ? (
+                        emptyModelLabel(config, capability)
+                    ) : (
+                        // 本地单用户工作站没有“管理员”可找，直接把人送到填写 Key 的那一页。
+                        <>
+                            还没有可用模型，请先配置自己的模型 API。
+                            <a href="/settings?section=quick" style={{ marginLeft: 6, textDecoration: "underline", color: "inherit" }}>
+                                去设置里填写 API 地址和 Key
+                            </a>
+                        </>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+
+    return (
+        <div className={cn(fullWidth ? "w-full min-w-0" : "w-fit max-w-full")} onMouseDown={(event) => event.stopPropagation()} onPointerDown={(event) => event.stopPropagation()}>
+            <Popover
+                open={open}
+                trigger={[]}
+                // 创建页统一以触发按钮下沿为首选锚点；AntD 仅在视口空间不足时整体翻到上方。
+                // 两层内容保持同一尺寸，因此切换到渠道详情时不会重新翻转或偏移。
+                placement={creationVariant ? "bottomLeft" : popoverPlacement}
+                arrow={false}
+                content={content}
+                classNames={{
+                    root: cn("canvas-model-picker-popover", "creation-model-picker-popover", popoverClassName),
+                    container: cn("canvas-composer-popover-surface", "creation-model-picker-surface"),
+                    content: "canvas-composer-popover-content",
+                }}
+            >
+                <button
+                    ref={triggerRef}
+                    type="button"
+                    className={cn("canvas-composer-model-picker", fullWidth ? "w-full" : "min-w-36 max-w-full", className)}
+                    aria-haspopup="listbox"
+                    aria-expanded={open}
+                    aria-label={placeholder}
+                    title={current ? pickerModelOptionLabel(config, current, showConfiguredModelName) : placeholder}
+                    onClick={() => setPickerOpen(!open)}
+                    onKeyDown={handleTriggerKeyDown}
+                >
+                    <span className="canvas-model-picker-label flex min-w-0 items-center gap-1.5">
+                        <span className="canvas-model-picker-trigger-icon" style={{ background: theme.toolbar.itemHover }}>
+                            <ModelIcon config={config} model={current} />
+                        </span>
+                        <span className="min-w-0 flex-1 truncate">{current ? (creationVariant ? pickerModelDisplayName(config, current, showConfiguredModelName) : pickerModelOptionLabel(config, current, showConfiguredModelName)) : placeholder}</span>
+                    </span>
+                    <ChevronDown className={cn("canvas-model-picker-chevron", open && "is-open")} aria-hidden="true" />
+                </button>
+            </Popover>
+        </div>
+    );
+}
+
+function emptyModelLabel(config: AiConfig, capability?: ModelCapability) {
+    const label = capability === "image" ? "生图" : capability === "video" ? "视频" : capability === "text" ? "文本" : capability === "audio" ? "音频" : "";
+    if (capability && config.models.length) return `暂无支持当前输入的${label}模型`;
+    return config.models.length ? `暂无匹配的${label}模型` : "当前没有可用模型";
+}
+
+function ModelLabel({
+    config,
+    model,
+    capability,
+    theme,
+    creationVariant,
+    showConfiguredModelName,
+    label,
+    requirements,
+    showPrice,
+    disabledReason,
+    showDescription,
+}: {
+    config: AiConfig;
+    model: string;
+    capability?: ModelCapability;
+    theme: (typeof canvasThemes)[keyof typeof canvasThemes];
+    creationVariant: boolean;
+    showConfiguredModelName: boolean;
+    label?: string;
+    requirements?: ModelRequirements;
+    showPrice: boolean;
+    disabledReason?: string;
+    showDescription: boolean;
+}) {
+    const meta = modelMenuMeta(model, capability);
+    const channel = resolveModelChannel(config, model);
+    const logicalCost = channel.modelCosts?.find((item) => item.model === modelOptionName(model));
+    const logicalSpec = logicalCost?.logicalCapabilitySpec;
+    const videoProfile = capability === "video" ? modelCapabilityConfigFor(config, model).video : undefined;
+    // 视频模型把「时长 · 支持尺寸」放在描述最前面：模型名里写死的尺寸（如 736P）容易让人
+    // 以为整条渠道只支持那一种分辨率，而这一行是被截断的，放后面会被看漏。
+    const videoSpecs = videoProfile
+        ? `${formatDurationSummary(videoProfile)} · ${videoProfile.resolutions.length ? videoProfile.resolutions.map((item) => item.toUpperCase()).join("/") : `分辨率：${VIDEO_RESOLUTION_DEFAULT_LABEL}`}`
+        : "";
+    const modelDescription = logicalCost?.description?.trim() || (isDirectSystemModel(config, model) ? "" : logicalSpec ? logicalCapabilitySummary(logicalSpec) : meta.description);
+    // 小字开头固定写上模型型号（发送给上游的真实 ID），避免同一渠道里多个版本只靠中文改名区分。
+    const modelId = modelOptionName(model);
+    const dialogueSummary = capability === "video" ? videoDialogueSummary(logicalCost?.capabilityConfig?.observed, modelDescription) : "";
+    const fallbackSummary = stripVideoDialogueSummary(modelDescription, dialogueSummary);
+    const specsAndSummary = [videoSpecs, dialogueSummary, fallbackSummary].filter(Boolean).join("｜");
+    const capabilitySummary = [disabledReason || modelId, specsAndSummary].filter(Boolean).join(" · ");
+    return (
+        <span className="flex w-full min-w-0 items-center gap-1.5 overflow-hidden py-0">
+            <span className="grid size-6 shrink-0 place-items-center rounded-md" style={{ background: theme.toolbar.itemHover }}>
+                <ModelIcon config={config} model={model} />
+            </span>
+            <span className="min-w-44 flex-1">
+                <span className="block min-w-0 truncate text-[var(--fs-label)] font-medium leading-none">{label || pickerModelDisplayName(config, model, showConfiguredModelName)}</span>
+                {/* 视频模型常驻显示“时长 · 支持尺寸”，不依赖悬停，避免只看模型名就误判分辨率。 */}
+                <span className={cn("canvas-model-picker-description mt-1 block whitespace-normal text-[var(--fs-tiny)]", (showDescription || videoSpecs || disabledReason) && "is-visible")} style={{ color: theme.node.muted }} title={capabilitySummary}>
+                    {disabledReason ? <>{disabledReason}{dialogueSummary ? ` · ${dialogueSummary}` : ""}</> : (
+                        <>
+                            <span className="canvas-model-picker-model-id">{modelId}</span>
+                            {specsAndSummary ? ` · ${specsAndSummary}` : null}
+                        </>
+                    )}
+                </span>
+            </span>
+            {!creationVariant && meta.time ? (
+                <span className="shrink-0 rounded-full px-1.5 py-0.5 text-[var(--fs-tiny)] tabular-nums" style={{ background: theme.toolbar.itemHover, color: theme.node.muted }}>
+                    {meta.time}
+                </span>
+            ) : null}
+        </span>
+    );
+}
+
+function logicalCapabilitySummary(spec: NonNullable<NonNullable<AiConfig["channels"][number]["modelCosts"]>[number]["logicalCapabilitySpec"]>) {
+    const operationLabels: Record<string, string> = {
+        text_to_video: "文生视频",
+        image_to_video: "图生视频",
+        reference_to_video: "全模态参考",
+        audio_to_video: "音频生视频",
+        extend: "视频续写",
+        inpaint: "局部修改",
+        replace_element: "元素替换",
+        camera_motion: "运镜调整",
+        style_transfer: "风格迁移",
+    };
+    const inputLabels: Record<string, { label: string; unit: string }> = {
+        image: { label: spec.capability === "text" ? "图片理解" : "参考图片", unit: "张" },
+        video: { label: spec.capability === "text" ? "视频理解" : "参考视频", unit: "个" },
+        audio: { label: "参考音频", unit: "个" },
+        mask: { label: "蒙版", unit: "张" },
+    };
+    const optionLabels: Record<string, string> = {
+        size: "画面比例",
+        aspectRatio: "画面比例",
+        quality: "生成质量",
+        count: "输出数量",
+        videoSeconds: "视频时长",
+        duration: "视频时长",
+        vquality: "输出分辨率",
+        resolution: "输出分辨率",
+        audioVoice: "音色",
+        audioFormat: "音频格式",
+        audioSpeed: "语速",
+    };
+    const values: string[] = [];
+    values.push(...(spec.operations || []).map((operation) => operationLabels[operation] || operation));
+    for (const [name, constraint] of Object.entries(spec.inputs || {})) {
+        if (constraint.max <= 0) continue;
+        const definition = inputLabels[name];
+        if (!definition) continue;
+        values.push(spec.capability === "text" ? `支持${definition.label}` : `${definition.label}最多 ${constraint.max}${definition.unit}`);
+    }
+    for (const [name, constraint] of Object.entries(spec.options || {})) {
+        const label = optionLabels[name];
+        if (!label) continue;
+        if (constraint.values?.length) values.push(`${label} ${constraint.values.map(publicScalarLabel).join("/")}`);
+        else if (constraint.min !== undefined && constraint.max !== undefined) values.push(`${label} ${constraint.min}-${constraint.max}`);
+    }
+    return values.slice(0, 2).join(" · ") || "智能匹配当前输入";
+}
+
+function publicScalarLabel(value: unknown) {
+    if (value === true) return "支持";
+    if (value === false) return "关闭";
+    return String(value);
+}
+
+function formatDurationSummary(profile: NonNullable<ReturnType<typeof modelCapabilityConfigFor>["video"]>) {
+    const values = videoDurationOptions(profile);
+    if (profile.duration.selection === "enum") return values.map((item) => `${item}s`).join("/");
+    return `${profile.duration.min || values[0]}-${profile.duration.max || values[values.length - 1]}s`;
+}
+
+
+function pickerModelDisplayName(config: AiConfig, model: string, showConfiguredModelName: boolean) {
+    const name = showConfiguredModelName ? configuredModelDisplayName(config, model) : modelDisplayName(config, model);
+    return isDirectSystemModel(config, model) ? `${name} · ${modelChannelLabel(config, model)}` : name;
+}
+
+function pickerModelOptionLabel(config: AiConfig, model: string, showConfiguredModelName: boolean) {
+    const displayName = showConfiguredModelName ? configuredModelDisplayName(config, model) : modelDisplayName(config, model);
+    const channel = resolveModelChannel(config, model);
+    return channel.scope === "system" ? pickerModelDisplayName(config, model, showConfiguredModelName) : `${displayName}（${channel.name}）`;
+}
+
+function tierResolutionLabel(value: string) {
+    const normalized = value.trim().toLowerCase() || "*";
+    return normalized === "*" ? "全部分辨率" : normalized.toUpperCase();
+}
+
+function tierDurationLabel(seconds: number) {
+    return seconds > 0 ? `${seconds} 秒` : "全部时长";
+}
+
+function tierSpecificationLabel(tier: NonNullable<NonNullable<AiConfig["channels"][number]["modelCosts"]>[number]["logicalVariants"]>[number]) {
+    const selector = tier.selector || {};
+    const operationLabels: Record<string, string> = { text_to_image: "文生图", image_to_image: "图生图", text_to_video: "文生视频", image_to_video: "图生视频", video_to_video: "视频生视频" };
+    const operation = selector.operation && selector.operation !== "*" ? operationLabels[selector.operation] || selector.operation : "";
+    const details = [
+        operation,
+        selector.quality && selector.quality !== "*" ? selector.quality.toUpperCase() : "",
+        selector.size && selector.size !== "*" ? selector.size : "",
+        tier.resolution !== "*" ? tierResolutionLabel(tier.resolution) : "",
+        tier.videoSeconds ? tierDurationLabel(tier.videoSeconds) : "",
+        selector.imageCount && selector.imageCount !== "*" ? `${selector.imageCount} 张参考图` : "",
+        selector.videoGenerateAudio === "true" ? "有声" : selector.videoGenerateAudio === "false" ? "无声" : "",
+    ].filter(Boolean);
+    return details.length ? details.join(" / ") : "默认规格";
+}
+
+
+function modelMenuMeta(model: string, capability?: ModelCapability): { description: string; time?: string } {
+    const name = modelOptionName(model).toLowerCase();
+    if (capability === "image") {
+        if (name.includes("nano banana") || name.includes("nanobanana") || name.includes("imagen")) return { description: "Gemini 高质量图片生成，适合角色和商业成片" };
+        if (name.includes("nano") || name.includes("pro")) return { description: "高质量图片生成，适合角色和商业成片" };
+        if (name.includes("seedream")) return { description: "快速出图，适合批量探索风格" };
+        if (name.includes("gpt") || name.includes("image")) return { description: "通用图片模型，提示词理解稳定" };
+        return { description: "图片生成模型" };
+    }
+    if (capability === "video") {
+        if (name.includes("veo") || name.includes("omni flash") || name.includes("omni-flash")) return { description: "Gemini 镜头生成与图生视频，适合成片流程", time: "3m" };
+        if (name.includes("seedance") || name.includes("sora")) return { description: "镜头生成与图生视频，适合成片流程", time: "3m" };
+        return { description: "视频生成模型", time: "3m" };
+    }
+    if (capability === "audio") return { description: "语音、音效或音乐生成", time: "20s" };
+    if (name.includes("claude")) return { description: "长文本、推理与创意写作", time: "10s" };
+    if (name.includes("gemini")) return { description: "多模态理解与快速文本生成", time: "10s" };
+    if (name.includes("deepseek")) return { description: "推理、代码和结构化文本", time: "10s" };
+    return { description: capability === "text" ? "文本生成模型" : "当前模型", time: "10s" };
+}
+
+export function ModelIcon({ config, model, icon }: { config?: AiConfig; model?: string; icon?: string }) {
+    return <ModelLogo icon={icon || (config && model ? modelIcon(config, model) : "")} size={14} />;
+}

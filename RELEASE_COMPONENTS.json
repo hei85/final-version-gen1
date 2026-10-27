@@ -1,0 +1,202 @@
+{
+  "releaseTag": "v2026.10.27-agent-auto-full",
+  "releaseDate": "2026-10-27",
+  "packagedFiles": 187256,
+  "uncompressedBytes": 6507380584,
+  "components": {
+    "release": "2026.10.27-agent-auto-full",
+    "applicationBuildVersion": "v1.5.4",
+    "platform": "Windows x64",
+    "pluginVersion": "0.1.20",
+    "filmProductionSkillVersion": "1.6.10",
+    "sourceBuildHashes": {
+      "backend/server.next.exe": {
+        "source": "03d9cd3799084e76aa9c754447775587e34f1bdeb3d149ba20c5f0925a2eca98",
+        "staged": "03d9cd3799084e76aa9c754447775587e34f1bdeb3d149ba20c5f0925a2eca98"
+      },
+      "web/dist/index.html": {
+        "source": "143bab57a67cf846e366cf252155dc3b9d692a82042e2ed802d96d79cb310575",
+        "staged": "143bab57a67cf846e366cf252155dc3b9d692a82042e2ed802d96d79cb310575"
+      },
+      "canvas-agent/dist/index.js": {
+        "source": "d75526eeb969c3be8924f24bdc5a0171f370a79b9e96f23ad668a312ad0d69be",
+        "staged": "d75526eeb969c3be8924f24bdc5a0171f370a79b9e96f23ad668a312ad0d69be"
+      },
+      "canvas-agent/dist/config.js": {
+        "source": "634cdae2b76a9ec5037fc39b50d0eb4981bb0453a9811690c17d3e47461de4fe",
+        "staged": "634cdae2b76a9ec5037fc39b50d0eb4981bb0453a9811690c17d3e47461de4fe"
+      },
+      "plugins/yingce/.codex-plugin/plugin.json": {
+        "source": "a1fec0dff57e4f88438546d0ab5ea77b6d274e42e5c350c1c39f3b6f06b75939",
+        "staged": "a1fec0dff57e4f88438546d0ab5ea77b6d274e42e5c350c1c39f3b6f06b75939"
+      },
+      "plugins/yingce/skills/yingce-film-production/SKILL.md": {
+        "source": "598cc1d2fd4ee066183a43e7d2c46ec5b17d46b150328e1e17c23b9e64ce1772",
+        "staged": "598cc1d2fd4ee066183a43e7d2c46ec5b17d46b150328e1e17c23b9e64ce1772"
+      }
+    },
+    "bundledSkillVersions": [
+      {
+        "name": "yingce-film-production",
+        "version": "1.6.10",
+        "contentHash": "3725acc8ed61d65a7faf4c69525fbb5ec6eed69e116b5f47e228b0bfe2f3cd43"
+      },
+      {
+        "name": "higgsfield",
+        "version": "3.40.0",
+        "contentHash": "bd8b39cef41c6d1c30bb8d7153524a290bfdc28e7146a20099c55f2ef39a0c51"
+      },
+      {
+        "name": "remotion-best-practices",
+        "version": "4.0.539",
+        "contentHash": "042fb982f542e31ee9c412c5592e707a590e77fed345526adf811d2598b38e5d"
+      },
+      {
+        "name": "h3-prompt-writing",
+        "version": "1",
+        "contentHash": "f7b4dd818d49b80f9181831a72c2e87594acd8d1ee064eab0cc64de64b8329a6"
+      },
+      {
+        "name": "ffmpeg-ops",
+        "version": "1",
+        "contentHash": "ef12c4fdef3eca2f6352b0311c9dcb4ae1d241db95ae1d1e0574d33c20439ea1"
+      }
+    ],
+    "firstRun": "login-free local initialization and local bundled-skill registration",
+    "modelCredentials": "configure on the receiving computer; no author credentials included",
+    "metadataCompatibility": [
+      {
+        "name": "higgsfield",
+        "reason": "The local ZIP installer limits the frontmatter description to500 characters",
+        "changed": "Entry description metadata only",
+        "instructionBodyUnchanged": true,
+        "allReferencedFilesUnchanged": 225,
+        "sourceContentHash": "fb480e581fd0da0230b608787d57ba980f7a2387eef990e450958ccb45e12618",
+        "portableContentHash": "bd8b39cef41c6d1c30bb8d7153524a290bfdc28e7146a20099c55f2ef39a0c51"
+      }
+    ],
+    "localMusicToolkit": {
+      "fluidsynth": "2.6.1",
+      "soundFont": "GeneralUser GS2.0.3",
+      "soundFontSha256": "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe",
+      "privateFilmMediaIncluded": false
+    }
+  },
+  "cleanStartTest": {
+    "repeatedBootstrap": true,
+    "productionSkillVersion": "1.6.10",
+    "freshDatabase": true,
+    "originalAppTouched": false,
+    "mediaEncodeAndDecode": true,
+    "portablePython": true,
+    "webHttp": 200,
+    "testPorts": [
+      18880,
+      18371,
+      13000
+    ],
+    "noLoginApi": true,
+    "runtimeHealth": 200,
+    "paidGenerationPerformed": false,
+    "relocatedMcpHandshake": true,
+    "firstRunBundledSkills": 5
+  },
+  "additionalChecks": {
+    "program-build-parity.json": {
+      "checkedFiles": 2930,
+      "mismatches": []
+    },
+    "native-modules-smoke.json": {
+      "sharpNative": true,
+      "onnxNative": true,
+      "syntheticPngBytes": 203,
+      "width": 64,
+      "height": 48
+    },
+    "music-toolkit-smoke.json": {
+      "midiToAudio": true,
+      "sampleRate": 48000,
+      "samples": 168448,
+      "nonSilent": true,
+      "privateFilmMedia": false
+    },
+    "nested-archives-audit.json": {
+      "archives": 96,
+      "members": 705,
+      "zipIntegrityPassed": true,
+      "secretPatternFindings": []
+    },
+    "fast-archive-build.json": {
+      "files": 187256,
+      "uncompressedBytes": 6507380584,
+      "allInputSha256Matched": true,
+      "compression": "ZIP Deflate level1 with bounded parallel input reads",
+      "archiveBytes": 2812494943,
+      "volumes": [
+        {
+          "name": "yingce-windows-x64-full-20261027.zip.001",
+          "bytes": 1887436800
+        },
+        {
+          "name": "yingce-windows-x64-full-20261027.zip.002",
+          "bytes": 925058143
+        }
+      ],
+      "elapsedSeconds": 986.5
+    },
+    "archive-integrity.json": {
+      "archiveFormat": "ZIP64 split volumes",
+      "fullCrcTest": true,
+      "files": 187256,
+      "uncompressedBytes": 6507380584,
+      "manifestEntriesMatched": 187256,
+      "extractedCriticalFilesSha256Matched": 9,
+      "preuploadedFirstVolumeMatchesFinalArchive": true,
+      "volumes": [
+        {
+          "name": "yingce-windows-x64-full-20261027.zip.001",
+          "bytes": 1887436800
+        },
+        {
+          "name": "yingce-windows-x64-full-20261027.zip.002",
+          "bytes": 925058143
+        }
+      ]
+    },
+    "downloader-smoke.json": {
+      "realGeneratedCmdExercised": true,
+      "testMedia": "Small local fixture with the same split-volume names and official extractor",
+      "downloadedAllVolumes": 2,
+      "sha256Verification": true,
+      "splitZipExtraction": true,
+      "unicodeAndSpacesInDestination": true,
+      "startupInvoked": true,
+      "publicGigabyteRedownloadPerformed": false
+    }
+  },
+  "secretReview": {
+    "privateStateFiles": 0,
+    "redactedPatternFindings": 88,
+    "reviewedFindings": 88,
+    "unresolvedFindings": 0,
+    "authorCredentialFindings": 0,
+    "classificationCounts": {
+      "false_positive_identifier_or_url": 32,
+      "upstream_public_crypto_test_fixture": 48,
+      "upstream_format_marker_or_documentation": 7,
+      "upstream_documentation_placeholder": 1
+    },
+    "scope": "All staged files SHA256; source/text files under20MiB scanned for API tokens, GitHub tokens and private-key headers. Findings are redacted.",
+    "limitations": "Pattern-based source/text review, not a formal guarantee of detecting every possible credential format. Personal data/config/log/project directories excluded by package construction."
+  },
+  "archiveParts": [
+    {
+      "name": "yingce-windows-x64-full-20261027.zip.001",
+      "bytes": 1887436800
+    },
+    {
+      "name": "yingce-windows-x64-full-20261027.zip.002",
+      "bytes": 925058143
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+// Bun 直接执行 TypeScript 测试时需要保留扩展名；生产 tsconfig 不包含 test/。
+import { DEFAULT_VIDEO_PROMPT_MAX_CHARS, defaultModelCapabilityConfig, modelCapabilityConfigFor, normalizeAudioCapabilityConfig, normalizeVideoValue, videoResolutionRequest } from "../src/lib/model-capabilities.ts";
+
+test("switching to MiniMax H3 replaces an unsupported 720p value with 768P", () => {
+    const profile = defaultModelCapabilityConfig("minimax-video", "MiniMax-H3").video!;
+
+    assert.deepEqual(normalizeVideoValue(profile, { seconds: "11", ratio: "16:9", resolution: "720" }), {
+        seconds: "11",
+        ratio: "16:9",
+        resolution: "768P",
+    });
+});
+
+test("an explicitly declared 736P tier is the routed value for a missing 720P request", () => {
+    const profile = defaultModelCapabilityConfig("minimax-video", "MiniMax-H3").video!;
+    profile.resolutions = ["736P"];
+    profile.defaultResolution = "1080P";
+
+    assert.equal(videoResolutionRequest(profile, "720"), "736P");
+    assert.equal(normalizeVideoValue(profile, { seconds: "5", ratio: "16:9", resolution: "720" }).resolution, "736P");
+});
+
+// 视频提示词由「输入框文本 + 连线内容 + 技能上下文」合成，技能上下文预算为 32000，
+// 合成结果远长于用户手输内容。默认上限过小会把正常可用的画布工作流拦在本地预检。
+// 这里锁定默认值本身，避免被改回偏小值（前端放行/后端拒绝的判定必须同源）。
+test("video prompt default allows a composed canvas prompt", () => {
+    assert.equal(DEFAULT_VIDEO_PROMPT_MAX_CHARS, 8000);
+    for (const protocol of [undefined, "seedance-videos-compatible", "agnes-video", "volcengine-ark-video"]) {
+        const profile = defaultModelCapabilityConfig(protocol, "test-model");
+        assert.equal(profile.video!.references.promptMaxChars, DEFAULT_VIDEO_PROMPT_MAX_CHARS);
+    }
+});
+
+test("raising the video default leaves text and image limits untouched", () => {
+    // 只放宽视频默认值，避免顺带改变其它能力的判定口径。
+    const profile = defaultModelCapabilityConfig("seedance-videos-compatible", "sd-2.5");
+    assert.equal(profile.text!.references.promptMaxChars, 32000);
+    assert.equal(profile.image!.references.promptMaxChars, 32000);
+});
+
+test("video reference plugins expose only the slots their adapters forward", () => {
+    assert.equal(defaultModelCapabilityConfig("kling-video", "kling-v3-omni").video!.references.maxVideos, 1);
+    assert.equal(defaultModelCapabilityConfig("kling-video", "kling-v3-omni").video!.references.minImages, 0);
+    assert.equal(defaultModelCapabilityConfig("dashscope-wan-video", "wan3.0-r2v").video!.references.maxVideos, 1);
+    assert.equal(defaultModelCapabilityConfig("dashscope-wan-video", "wan3.0-r2v").video!.references.minImages, 0);
+    // Standard Jimeng Video 3.0 is image-to-video; its adapter does not send
+    // a reference video field, so it must remain closed until a dedicated
+    // action-imitation endpoint is configured.
+    assert.equal(defaultModelCapabilityConfig("volcengine-jimeng-video", "jimeng-3.0").video!.references.maxVideos, 0);
+});
+
+test("generic newapi video models expose reference video slots for future relays", () => {
+    const profile = defaultModelCapabilityConfig("newapi", "future-video-model").video!;
+    assert.equal(profile.references.minImages, 0);
+    assert.equal(profile.references.maxVideos, 3);
+    assert.equal(profile.references.maxVideoBytes, 200 * 1024 * 1024);
+    assert.equal(profile.references.maxVideoDurationSeconds, 15);
+    assert.ok(profile.operations.includes("reference_to_video"));
+});
+
+test("missing or undefined audio capability declarations remain explicitly unknown", () => {
+    const config = normalizeAudioCapabilityConfig({ tts: "configured", voiceDesign: undefined, ambientSound: undefined });
+
+    assert.deepEqual(
+        [config.tts, config.voiceDesign, config.voiceReference, config.ambientSound, config.soundEffects, config.music],
+        ["configured", "unknown", "unknown", "unknown", "unknown", "unknown"],
+    );
+
+    const profile = modelCapabilityConfigFor({ channels: [{
+        id: "relay",
+        models: ["mimo-v2.5-tts"],
+        modelCosts: [{
+            model: "mimo-v2.5-tts",
+            protocol: "xiaomi-mimo-tts",
+            capabilityConfig: { version: 1, audio: { tts: "configured", voiceDesign: undefined } },
+        }],
+    }] }, "relay::mimo-v2.5-tts");
+
+    assert.equal(profile.audio?.voiceDesign, "unknown");
+    assert.equal(profile.audio?.voiceReference, "unknown");
+    assert.equal(profile.audio?.music, "unknown");
+});

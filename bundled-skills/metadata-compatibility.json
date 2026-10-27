@@ -1,0 +1,12 @@
+[
+  {
+    "name": "higgsfield",
+    "reason": "The local ZIP installer limits the frontmatter description to500 characters",
+    "changed": "Entry description metadata only",
+    "originalDescription": "Use this skill whenever the user asks anything about Higgsfield AI — writing or refining video/image prompts, choosing a model (Kling, Veo, Wan, Seedance, Minimax Hailuo, DoP, Soul, Nano Banana, Seedream, Flux, GPT Image, etc.), camera controls, named motion presets, Soul ID character consistency, Cinema Studio 2.5/3.0, Vibe Motion, troubleshooting failed generations, credit optimization, Photodump, or any mention of higgsfield.ai. Also trigger on generic \"write me a video prompt\" or \"make me an AI video prompt\" requests when Higgsfield is the user's configured platform.\n",
+    "instructionBodyUnchanged": true,
+    "allReferencedFilesUnchanged": 225,
+    "sourceContentHash": "fb480e581fd0da0230b608787d57ba980f7a2387eef990e450958ccb45e12618",
+    "portableContentHash": "bd8b39cef41c6d1c30bb8d7153524a290bfdc28e7146a20099c55f2ef39a0c51"
+  }
+]

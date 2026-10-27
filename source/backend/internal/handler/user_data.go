@@ -1,0 +1,424 @@
+package handler
+
+import (
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
+	"infinite-canvas/backend/internal/model"
+	"infinite-canvas/backend/internal/service"
+
+	"github.com/gin-gonic/gin"
+)
+
+func RegisterUserDataRoutes(r *gin.RouterGroup, svc *service.Service) {
+	r.GET("/settings/prompt-templates", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		preferences, err := svc.UserPromptPreferences(user)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"preferences": preferences})
+	})
+	r.PATCH("/settings/prompt-templates/:operation", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 64<<10)
+		var req service.UserPromptCustomizationRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			fail(c, http.StatusBadRequest, err)
+			return
+		}
+		customization, err := svc.UpdateUserPromptCustomization(user, c.Param("operation"), req)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"customization": customization})
+	})
+	r.DELETE("/settings/prompt-templates/:operation", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		if err := svc.ResetUserPromptCustomization(user, c.Param("operation")); err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"ok": true})
+	})
+	r.GET("/settings/oss", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		setting, err := svc.UserOSSSetting(user)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"setting": setting})
+	})
+	r.PATCH("/settings/oss", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 64<<10)
+		var req service.OSSSettingRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			fail(c, http.StatusBadRequest, err)
+			return
+		}
+		setting, err := svc.UpdateUserOSSSetting(user, req)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"setting": setting})
+	})
+	r.POST("/settings/oss/test", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		if !enforceRateLimit(c, "user-storage-test:"+user.ID, 6, time.Minute) {
+			return
+		}
+		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 64<<10)
+		var req service.OSSSettingRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			fail(c, http.StatusBadRequest, err)
+			return
+		}
+		result, err := svc.TestUserOSSSetting(user, req)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, result)
+	})
+	r.GET("/resources", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		pageSize, err := parsePositiveQueryInt(c.Query("pageSize"), 200)
+		if err != nil {
+			fail(c, http.StatusBadRequest, err)
+			return
+		}
+		resources, err := svc.Resources(user.ID, pageSize)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"resources": resources})
+	})
+	r.GET("/resources/storage-usage", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		usage, err := svc.AccountFileStorageUsage(user.ID)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"usage": usage})
+	})
+	r.POST("/resources/:id/ark-private-asset", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		policy, available := loadRuntimePolicy(c, svc)
+		if !available || !enforceRateLimit(c, "resources-ark-private-asset:"+user.ID, policy.Request.ResourceImportPerMinute, time.Minute) {
+			return
+		}
+		result, err := svc.SyncResourceToArkPrivateAsset(c.Request.Context(), user, c.Param("id"))
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"sync": result})
+	})
+	r.POST("/resources", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		policy, available := loadRuntimePolicy(c, svc)
+		if !available || !enforceRateLimit(c, "resources-upload:"+user.ID, policy.Request.ResourceUploadPerMinute, time.Minute) {
+			return
+		}
+		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, (policy.Resource.ResourceUploadMB<<20)+(1<<20))
+		file, err := c.FormFile("file")
+		if err != nil {
+			var maxErr *http.MaxBytesError
+			if errors.As(err, &maxErr) {
+				// 超 MaxBytesReader 上限时 FormFile 返回英文 http 错误，转成与 service 配额校验一致的中文文案。
+				fail(c, http.StatusBadRequest, fmt.Errorf("单个上传文件必须小于 %dMB", policy.Resource.ResourceUploadMB))
+				return
+			}
+			fail(c, http.StatusBadRequest, err)
+			return
+		}
+		width, _ := strconv.Atoi(c.PostForm("width"))
+		height, _ := strconv.Atoi(c.PostForm("height"))
+		durationMs, _ := strconv.ParseInt(c.PostForm("durationMs"), 10, 64)
+		resource, err := svc.UploadResource(user.ID, file, c.PostForm("kind"), width, height, durationMs, c.GetHeader("X-Idempotency-Key"))
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"resource": resource})
+	})
+	r.POST("/resources/import", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		policy, available := loadRuntimePolicy(c, svc)
+		if !available || !enforceRateLimit(c, "resources-import:"+user.ID, policy.Request.ResourceImportPerMinute, time.Minute) {
+			return
+		}
+		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 64<<10)
+		var req struct {
+			URL        string `json:"url"`
+			Kind       string `json:"kind"`
+			Width      int    `json:"width"`
+			Height     int    `json:"height"`
+			DurationMs int64  `json:"durationMs"`
+		}
+		if err := c.ShouldBindJSON(&req); err != nil {
+			fail(c, http.StatusBadRequest, err)
+			return
+		}
+		resource, err := svc.ImportResourceURL(user.ID, req.URL, req.Kind, req.Width, req.Height, req.DurationMs, c.GetHeader("X-Idempotency-Key"))
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		ok(c, gin.H{"resource": resource})
+	})
+	r.GET("/resources/:id", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		resource, err := svc.Resource(user.ID, c.Param("id"))
+		if err != nil {
+			fail(c, http.StatusNotFound, err)
+			return
+		}
+		ok(c, gin.H{"resource": resource})
+	})
+	r.GET("/resources/:id/probe", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		fullDecode := c.Query("decode") == "1" || c.Query("full") == "true"
+		result, err := svc.ProbeResource(user.ID, c.Param("id"), fullDecode)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		c.Header("Cache-Control", "private, no-store")
+		ok(c, result)
+	})
+
+	r.GET("/resources/:id/oss-url", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		resource, err := svc.Resource(user.ID, c.Param("id"))
+		if err != nil {
+			fail(c, http.StatusNotFound, err)
+			return
+		}
+		ossURL, err := svc.DirectResourceURL(user.ID, resource.ID)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		// 签名地址只用于当前复制动作，禁止浏览器或中间代理缓存。
+		c.Header("Cache-Control", "private, no-store")
+		c.Header("Referrer-Policy", "no-referrer")
+		ok(c, gin.H{"url": ossURL})
+	})
+	r.GET("/resources/:id/file", func(c *gin.Context) {
+		user, err := currentUser(c, svc)
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		delivery, err := svc.PrepareResourceDelivery(user.ID, c.Param("id"), service.ResourceDeliveryOptions{
+			ForceDirect: c.Query("direct") == "1",
+			ForceProxy:  c.Query("proxy") == "1",
+		})
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		if delivery.RedirectURL != "" {
+			// 签名链接仅有效 5 分钟；重定向缓存必须短于签名 TTL，避免命中过期地址。
+			c.Header("Cache-Control", "private, max-age=240")
+			c.Header("Referrer-Policy", "no-referrer")
+			c.Header("X-Content-Type-Options", "nosniff")
+			c.Redirect(http.StatusTemporaryRedirect, delivery.RedirectURL)
+			return
+		}
+		resource := delivery.Resource
+		etag := resourceResponseETag(resource)
+		// variant=playback：serve 浏览器兼容播放副本（H.265→H.264 转码）。
+		// 副本就绪时用独立 ETag 后缀，避免浏览器拿原件缓存命中 304 而继续黑屏。
+		usePlayback := c.Query("variant") == "playback" && resource.Provider == "local" &&
+			resource.PlaybackStatus == model.PlaybackStatusReady && resource.PlaybackObjectKey != ""
+		serveETag := etag
+		if usePlayback {
+			serveETag = etag + ":pb"
+		}
+		// 资源 ID 内容不可变（上传永远生成新 ID，不会原地覆盖）：图片可以放心交给浏览器
+		// 磁盘强缓存 30 天，大画布二次打开零请求直读磁盘缓存。视频/音频涉及转码副本
+		// 就绪与 Range 语义，保持逐次条件请求（304）。
+		if strings.HasPrefix(resource.MimeType, "image/") {
+			c.Header("Cache-Control", "private, max-age=2592000, stale-while-revalidate=86400")
+		} else {
+			c.Header("Cache-Control", "private, no-cache")
+		}
+		c.Header("ETag", serveETag)
+		c.Header("Accept-Ranges", "bytes")
+		c.Header("X-Content-Type-Options", "nosniff")
+		if resource.Kind == "file" {
+			c.Header("Content-Disposition", "attachment")
+			c.Header("Content-Security-Policy", "sandbox")
+		}
+		if ifNoneMatch(c.GetHeader("If-None-Match"), serveETag) {
+			c.Status(http.StatusNotModified)
+			return
+		}
+		rangeHeader := c.GetHeader("Range")
+		if ifRange := strings.TrimSpace(c.GetHeader("If-Range")); ifRange != "" && ifRange != serveETag {
+			rangeHeader = ""
+		}
+		var stream *service.ResourceStream
+		if usePlayback {
+			stream, err = svc.OpenResourcePlaybackRange(user.ID, resource.ID)
+			if err == nil {
+				resource = stream.Resource // MimeType 已置 video/mp4
+			} else if errors.Is(err, service.ErrPlaybackNotReady) {
+				// 副本尚未就绪：回退原件，并撤销 :pb 后缀，保证副本就绪后
+				// 浏览器不会拿原件缓存命中 304 而继续黑屏。
+				c.Header("ETag", etag)
+				stream, err = svc.OpenResourceRange(user.ID, resource.ID, rangeHeader)
+				if err != nil {
+					failService(c, err)
+					return
+				}
+			} else {
+				failService(c, err)
+				return
+			}
+		} else {
+			stream, err = svc.OpenResourceRange(user.ID, resource.ID, rangeHeader)
+			if err != nil {
+				failService(c, err)
+				return
+			}
+		}
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		defer stream.Body.Close()
+		if resource.MimeType == "" {
+			resource.MimeType = "application/octet-stream"
+		}
+		if resource.Provider == "local" {
+			if seeker, ok := stream.Body.(io.ReadSeeker); ok {
+				c.Header("Content-Type", resource.MimeType)
+				http.ServeContent(c.Writer, c.Request, resource.ID, resource.UpdatedAt, seeker)
+				return
+			}
+		}
+		if stream.ContentRange != "" {
+			c.Header("Content-Range", stream.ContentRange)
+		}
+		if stream.AcceptRanges != "" {
+			c.Header("Accept-Ranges", stream.AcceptRanges)
+		}
+		c.DataFromReader(stream.StatusCode, stream.ContentLength, resource.MimeType, stream.Body, nil)
+	})
+	publicResourceHandler := func(c *gin.Context) {
+		stream, err := svc.OpenPublicResourceRange(c.Param("id"), c.Query("expires"), c.Query("signature"), c.GetHeader("Range"))
+		if err != nil {
+			failService(c, err)
+			return
+		}
+		defer stream.Body.Close()
+		resource := stream.Resource
+		if resource.MimeType == "" {
+			resource.MimeType = "application/octet-stream"
+		}
+		c.Header("Cache-Control", "public, max-age=0, must-revalidate")
+		c.Header("Accept-Ranges", "bytes")
+		c.Header("Referrer-Policy", "no-referrer")
+		c.Header("X-Content-Type-Options", "nosniff")
+		if stream.ContentRange != "" {
+			c.Header("Content-Range", stream.ContentRange)
+		}
+		if seeker, ok := stream.Body.(io.ReadSeeker); ok {
+			c.Header("Content-Type", resource.MimeType)
+			http.ServeContent(c.Writer, c.Request, resource.ID, resource.UpdatedAt, seeker)
+			return
+		}
+		c.DataFromReader(stream.StatusCode, stream.ContentLength, resource.MimeType, stream.Body, nil)
+	}
+	r.GET("/public/resources/:id/file", publicResourceHandler)
+	r.GET("/public/resources/:id/file/:filename", publicResourceHandler)
+}
+
+func resourceResponseETag(resource *model.Resource) string {
+	value := strings.Trim(strings.TrimSpace(resource.ETag), `"`)
+	if value == "" {
+		value = fmt.Sprintf("%s-%d-%d", resource.ID, resource.Size, resource.UpdatedAt.UnixNano())
+	}
+	return strconv.Quote(value)
+}
+
+func ifNoneMatch(header string, etag string) bool {
+	for _, candidate := range strings.Split(header, ",") {
+		candidate = strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(candidate), "W/"))
+		if candidate == "*" || candidate == etag {
+			return true
+		}
+	}
+	return false
+}

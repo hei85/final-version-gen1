@@ -1,0 +1,46 @@
+{
+  "formatVersion": 1,
+  "skills": [
+    {
+      "name": "yingce-film-production",
+      "version": "1.6.10",
+      "contentHash": "3725acc8ed61d65a7faf4c69525fbb5ec6eed69e116b5f47e228b0bfe2f3cd43",
+      "file": "yingce-film-production.zip",
+      "sha256": "8ed123bdd5a029ea0e578d3b843c737de03f548624182d173b790c243128e306",
+      "fileCount": 23
+    },
+    {
+      "name": "higgsfield",
+      "version": "3.40.0",
+      "contentHash": "bd8b39cef41c6d1c30bb8d7153524a290bfdc28e7146a20099c55f2ef39a0c51",
+      "file": "higgsfield.zip",
+      "sha256": "a37b4f72848abb4d2a2b5c76d2da66a68356319be935e79f1c89969669beeeaf",
+      "fileCount": 226,
+      "sourceContentHash": "fb480e581fd0da0230b608787d57ba980f7a2387eef990e450958ccb45e12618"
+    },
+    {
+      "name": "remotion-best-practices",
+      "version": "4.0.539",
+      "contentHash": "042fb982f542e31ee9c412c5592e707a590e77fed345526adf811d2598b38e5d",
+      "file": "remotion-best-practices.zip",
+      "sha256": "b92e741b81a3e08dac0d75860c7a2d373a971c6ea70acf7b531ddd41db94bfd4",
+      "fileCount": 144
+    },
+    {
+      "name": "h3-prompt-writing",
+      "version": "1",
+      "contentHash": "f7b4dd818d49b80f9181831a72c2e87594acd8d1ee064eab0cc64de64b8329a6",
+      "file": "h3-prompt-writing.zip",
+      "sha256": "db94c664a7cb366a3d4b60168aa3d8636892c219b62d47a45a77258fd1c64d33",
+      "fileCount": 4
+    },
+    {
+      "name": "ffmpeg-ops",
+      "version": "1",
+      "contentHash": "ef12c4fdef3eca2f6352b0311c9dcb4ae1d241db95ae1d1e0574d33c20439ea1",
+      "file": "ffmpeg-ops.zip",
+      "sha256": "937a39ea966514d3f6fae8a580bccaaa981b371bcd30b7876643b9cfb0c0ca6e",
+      "fileCount": 35
+    }
+  ]
+}

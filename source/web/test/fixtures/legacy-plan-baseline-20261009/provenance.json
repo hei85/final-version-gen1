@@ -1,0 +1,13 @@
+{
+  "source": "preserved before-autonomy-install builder, 2026-10-09",
+  "files": [
+    {
+      "file": "production-plan.ts",
+      "sha256": "70d3e559a5c241cea2117db85ecbc05ddc8bace5c1666d2bbc0f551ea9bd1cbe"
+    },
+    {
+      "file": "production-self-check-plan.ts",
+      "sha256": "1cae1f6d59728e95fd7e3b476b310072d1fcd50a580f68e08da1fddf040328ce"
+    }
+  ]
+}

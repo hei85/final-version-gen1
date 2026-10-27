@@ -1,0 +1,494 @@
+openapi: 3.0.3
+info:
+  title: 衍图 HTTP API
+  version: "1.0.0"
+  description: |
+    路径前缀是 `/api`。前后端一起发布，不按路径做 API 版本。
+
+    业务 JSON 信封为 `{ code, data, msg, reason }`。`code === 0` 表示成功；失败时 HTTP status 与
+    `code` 都表达失败。`code` 默认等于 HTTP 状态；同一状态下的细分原因使用 `status*100+n`
+    （例如 40301 配额、42901 限流）。机器判断请用 `reason`，不要解析 `msg`。
+
+    TypeScript 调用面仍是 `web/src/services/api` 的 `http` 模块，不从本规范生成客户端。
+servers:
+  - url: /api
+security:
+  - sessionCookie: []
+tags:
+  - name: meta
+  - name: auth
+  - name: projects
+  - name: canvas
+  - name: resources
+  - name: tasks
+  - name: assets
+  - name: models
+  - name: agent
+  - name: production
+  - name: skills
+  - name: admin
+paths:
+  /skills/{id}/package:
+    put:
+      tags: [skills]
+      summary: 上传已有 ZIP 技能的新版本
+      description: 仅技能作者可上传。保留原技能 ID，并将 ZIP 解析为新的不可变技能包版本。
+      operationId: updateZipSkillPackage
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: 已将新 ZIP 包追加为该技能的当前版本，旧版本及用户引用保留
+        "400":
+          description: 技能不存在、不是 ZIP 技能或上传包无效/超过大小限制
+        "403":
+          description: 当前用户不是技能作者
+  /production-runs/{id}/steps/result:
+    post:
+      tags: [production]
+      summary: 记录制作质检步骤结果
+      description: |
+        将实际执行的程序质检、语义质检或连续性检查证据写回已有的 check/verify 步骤。状态由 checks 推导，使用 expectedRevision 做并发控制。
+        quality/continuity 步骤必须包含 semanticQuality；缺少或 unavailable 时记录 uncertain，不能将缺失的语义证据标成成功。
+        证据限制为 64 KiB JSON，不能包含凭证字段或媒体 URL。
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [expectedRevision, stepId, evidence]
+              properties:
+                expectedRevision:
+                  type: integer
+                  minimum: 0
+                stepId:
+                  type: string
+                  minLength: 1
+                evidence:
+                  type: object
+                  required: [checks]
+                  properties:
+                    checks:
+                      type: array
+                      minItems: 1
+                      maxItems: 200
+                      items:
+                        type: object
+                        required: [name, status]
+                        properties:
+                          name:
+                            type: string
+                          status:
+                            type: string
+                            enum: [passed, failed, uncertain]
+                    semanticQuality:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          enum: [passed, failed, uncertain, unavailable]
+                  additionalProperties: true
+      responses:
+        "200":
+          description: 已记录证据并返回更新后的 ProductionRun
+        "400":
+          description: 证据格式无效或超出限制
+        "404":
+          description: 制作运行不存在或不属于当前用户
+        "409":
+          description: run 版本已变化、步骤类型错误或依赖尚未完成
+  /production-runs/{id}/steps/render:
+    post:
+      tags: [production]
+      summary: 按 ProductionPlan 提交主时间线渲染
+      description: |
+        只接受当前 run 中 Kind=render 的有效步骤，并核对依赖、revision、重试 lineage、完整 manifest、分镜片段/音轨/字幕与最新成功生成任务的真实资源绑定。
+        相同 idempotencyKey 和请求正文只返回原 attempt/task；不确定 attempt 不会重新排队。新 attempt 通过 retryOf 指向最近一次已结清 attempt。
+        输出画幅和帧率必须符合已固化的 Brief 与 ProductionPlan 时间基准。
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [expectedRevision, stepId, idempotencyKey, timeline]
+              properties:
+                expectedRevision: { type: integer, minimum: 0 }
+                stepId: { type: string, minLength: 1 }
+                idempotencyKey: { type: string, minLength: 1, maxLength: 120 }
+                retryOf: { type: string }
+                timeline:
+                  type: object
+                  required: [projectId, timeline]
+                  properties:
+                    projectId: { type: string, minLength: 1 }
+                    timeline:
+                      type: object
+                      description: TimelineProject；视频 clip 带 storyboardRowId/segmentId，音频和字幕 clip 带 storyboardRowId，并通过 directMedia.storageKey 引用对应生成任务的 resource:<id>
+                      additionalProperties: true
+                    output: { type: object, additionalProperties: true }
+      responses:
+        "200": { description: 返回持久化 render attempt 与 taskId；幂等重放返回同一任务 }
+        "400": { description: 时间线或交付参数无效 }
+        "404": { description: run 或资源不存在或无权访问 }
+        "409": { description: revision、步骤依赖、绑定清单、画幅或幂等键冲突 }
+  /model-catalog:
+    get:
+      tags: [models]
+      summary: 获取创作端模型目录
+      description: |
+        固定 source=system，channels 直接来自系统渠道下的模型列表，models 为空数组；不反查逻辑模型。
+        一级跨渠道按 displayName 分组，二级显示 channelLabel；模型请求仍使用 channelId + modelKey 定位。
+        channelLabel 是后台渠道模型创建和更新时配置的渠道展示名，去除首尾空白后最多 80 字，空字符串表示使用所属渠道名称。
+        description 是后台渠道模型创建和更新时填写的公开模型描述，去除首尾空白后最多 500 字；空字符串表示未填写。
+        displayName 和 icon 用于一级模型菜单，channelLabel 不参与路由、权限或计费。
+        渠道级 publicAlias 已废弃；成本配置和成本快照仅供管理端，不包含在本接口及用户报价中。
+      responses:
+        "200":
+          description: 当前启用的模型目录
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    enum: [0]
+                  msg:
+                    type: string
+                  data:
+                    type: object
+                    required: [source, models, channels]
+                    properties:
+                      source:
+                        type: string
+                        enum: [system]
+                      models:
+                        type: array
+                        items:
+                          type: object
+                      channels:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            displayName:
+                              type: string
+                            models:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  modelKey:
+                                    type: string
+                                  displayName:
+                                    type: string
+                                  icon:
+                                    type: string
+                                  channelLabel:
+                                    type: string
+                                    maxLength: 80
+                                    default: ""
+                                  description:
+                                    type: string
+                                    maxLength: 500
+                                    default: ""
+        "401":
+          $ref: "#/components/responses/Error"
+  /public/welcome:
+    get:
+      tags: [meta]
+      security: []
+      summary: 读取欢迎页开放状态
+      responses:
+        "200":
+          description: 信封 data 仅包含 welcomeEnabled 布尔值，默认 true；Cache-Control 为 no-store
+        "500":
+          description: 配置读取失败
+  /openapi.yaml:
+    get:
+      tags: [meta]
+      security: []
+      summary: 本 OpenAPI 文档
+      responses:
+        "200":
+          description: OpenAPI 3.0 YAML
+          content:
+            application/yaml:
+              schema:
+                type: string
+  /admin/channels/{id}/duplicate:
+    post:
+      tags: [admin]
+      summary: 复制系统渠道
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          $ref: "#/components/responses/Envelope"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  /auth/session:
+    get:
+      tags: [auth]
+      summary: 当前登录会话
+      responses:
+        "200":
+          $ref: "#/components/responses/Envelope"
+        "401":
+          $ref: "#/components/responses/Error"
+  /auth/login:
+    post:
+      tags: [auth]
+      security: []
+      summary: 登录并设置会话 Cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string }
+                password: { type: string }
+      responses:
+        "200":
+          $ref: "#/components/responses/Envelope"
+        "401":
+          $ref: "#/components/responses/Error"
+  /projects:
+    get:
+      tags: [projects]
+      summary: 短剧项目列表
+      responses:
+        "200":
+          $ref: "#/components/responses/Envelope"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+    post:
+      tags: [projects]
+      summary: 创建短剧项目
+      responses:
+        "200":
+          $ref: "#/components/responses/Envelope"
+        "400":
+          $ref: "#/components/responses/Error"
+  /resources:
+    get:
+      tags: [resources]
+      summary: 当前用户资源列表
+      responses:
+        "200":
+          $ref: "#/components/responses/Envelope"
+    post:
+      tags: [resources]
+      summary: 上传资源文件
+      responses:
+        "200":
+          $ref: "#/components/responses/Envelope"
+        "403":
+          description: 配额用尽（code=40301, reason=quota_exceeded）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /resources/{id}/file:
+    get:
+      tags: [resources]
+      summary: 读取资源二进制（非 JSON 信封）
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: 文件流
+        "401":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  /tasks:
+    post:
+      tags: [tasks]
+      summary: 创建生成任务
+      responses:
+        "200":
+          $ref: "#/components/responses/Envelope"
+        "400":
+          $ref: "#/components/responses/Error"
+  /tasks/{id}/text-events:
+    get:
+      tags: [tasks]
+      summary: 文本任务 SSE
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: query
+          name: after
+          schema: { type: integer }
+          description: 递增事件游标，不要用任务 ID
+      responses:
+        "200":
+          description: text/event-stream
+  /resources/{id}/probe:
+    get:
+      tags: [resources]
+      summary: 探测用户媒体资源
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: query
+          name: decode
+          schema: { type: boolean, default: false }
+          description: 为 true 时执行完整解码；视频额外解码首、中、尾帧并返回样本证据。
+      responses:
+        "200":
+          description: 媒体探测结果
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Envelope"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/ResourceProbeResult"
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: open_ai_canvas_session
+  schemas:
+    Envelope:
+      type: object
+      required: [code, msg]
+      properties:
+        code:
+          type: integer
+          description: 0 成功；失败时默认等于 HTTP 状态，或 status*100+n 的细分码
+        data: {}
+        msg:
+          type: string
+        reason:
+          type: string
+          description: 仅失败时出现。稳定机器可读原因。
+    ErrorEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            code:
+              type: integer
+              enum: [400, 401, 403, 404, 409, 429, 500, 502, 503, 504, 40301, 40901, 42901]
+            data:
+              nullable: true
+            reason:
+              type: string
+              enum:
+                - invalid_argument
+                - unauthorized
+                - forbidden
+                - not_found
+                - conflict
+                - failed_precondition
+                - quota_exceeded
+                - rate_limited
+                - unavailable
+                - timeout
+                - internal
+                - bad_gateway
+                - model_capability_not_supported
+                - model_price_not_configured
+                - model_route_unavailable
+                - provider_request_failed
+                - model_catalog_mismatch
+                - invalid_model_selection
+    ResourceProbeResult:
+      type: object
+      required: [resourceId, mediaType, probe]
+      properties:
+        resourceId: { type: string }
+        mediaType: { type: string }
+        probe:
+          $ref: "#/components/schemas/ResourceProbeReport"
+    ResourceProbeReport:
+      type: object
+      properties:
+        durationMs: { type: integer, format: int64 }
+        videoStreams: { type: integer }
+        audioStreams: { type: integer }
+        subtitleStreams: { type: integer }
+        width: { type: integer }
+        height: { type: integer }
+        decoded: { type: boolean }
+        videoFrameSamples:
+          type: array
+          description: decode=true 且资源含视频流时，必须包含已解码的 start/middle/end 样本。
+          items:
+            $ref: "#/components/schemas/MediaVideoFrameSample"
+    MediaVideoFrameSample:
+      type: object
+      required: [position, timestampMs, decoded, imageBytes]
+      properties:
+        position: { type: string, enum: [start, middle, end] }
+        timestampMs: { type: integer, format: int64 }
+        decoded: { type: boolean }
+        imageBytes: { type: integer, format: int64 }
+  responses:
+    Envelope:
+      description: 业务成功信封
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Envelope"
+    Error:
+      description: 业务失败信封
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"

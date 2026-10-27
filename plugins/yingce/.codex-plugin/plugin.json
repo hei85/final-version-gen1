@@ -1,0 +1,42 @@
+{
+  "name": "yingce",
+  "version": "0.1.20",
+  "description": "Control this portable Yingce canvas. Mention 衍图 and request Agent 全自动制作 to load the existing script-to-film workflow and continue through real film delivery.",
+  "author": {
+    "name": "ddcat"
+  },
+  "repository": "https://github.com/ddcat-ai/open-ai-canvas",
+  "license": "MIT",
+  "keywords": [
+    "yingce",
+    "衍图",
+    "canvas",
+    "mcp",
+    "agent",
+    "Agent全自动制作",
+    "全自动做片"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "衍图",
+    "shortDescription": "@衍图 + Agent全自动制作，从剧本到成片。",
+    "longDescription": "Mention 衍图 and request Agent 全自动制作 to invoke the existing complete production rules: read the script, prepare assets and four-panel keyframes, review real references, generate and repair shots, edit sound and picture, and deliver a playable film with an editable canvas. Also supports canvas editing, media tools and persistent task recovery. Discussing or configuring the trigger alone does not start production.",
+    "developerName": "ddcat",
+    "category": "Productivity",
+    "capabilities": [
+      "Canvas",
+      "MCP",
+      "Creative Workflow"
+    ],
+    "defaultPrompt": [
+      "Agent 全自动制作。完整读取并执行衍图已有的整片制作规则，根据我提供的剧本自主完成各阶段、自检、返修、剪辑与声音，最终交付可播放成片和可编辑画布；沿用本次明确的模型、规格与授权",
+      "读取当前画布，列出分镜、节点、连接和可用素材",
+      "在当前画布创建分镜，并连接逐镜图片和视频节点",
+      "检查当前画布 MCP 能力，报告真实进度和未接通功能"
+    ],
+    "brandColor": "#2563EB",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/icon.png"
+  }
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "at": "2026-10-07T02:46:02.263Z",
+    "tool": "canvas_preflight_image_edit",
+    "isError": false,
+    "result": {
+      "ready": true,
+      "action": "lighting",
+      "model": "CHANNEL_000004::gpt-image-2",
+      "maskSupported": true,
+      "transparentSupported": true,
+      "maxReferences": 16,
+      "blockers": [],
+      "warnings": [
+        "这里只核对本地配置和模型能力合同，未请求上游，也未验证生成质量。"
+      ],
+      "paidRequestSubmitted": false
+    }
+  },
+  {
+    "at": "2026-10-07T02:46:02.284Z",
+    "tool": "canvas_preflight_image_edit",
+    "isError": false,
+    "result": {
+      "ready": true,
+      "action": "remove_background",
+      "model": "CHANNEL_000004::gpt-image-2",
+      "maskSupported": true,
+      "transparentSupported": true,
+      "maxReferences": 16,
+      "blockers": [],
+      "warnings": [
+        "这里只核对本地配置和模型能力合同，未请求上游，也未验证生成质量。"
+      ],
+      "paidRequestSubmitted": false
+    }
+  },
+  {
+    "at": "2026-10-07T02:46:02.309Z",
+    "tool": "canvas_preflight_image_edit",
+    "isError": false,
+    "result": {
+      "ready": true,
+      "action": "mask",
+      "model": "CHANNEL_000004::gpt-image-2",
+      "maskSupported": true,
+      "transparentSupported": true,
+      "maxReferences": 16,
+      "blockers": [],
+      "warnings": [
+        "这里只核对本地配置和模型能力合同，未请求上游，也未验证生成质量。"
+      ],
+      "paidRequestSubmitted": false
+    }
+  }
+]

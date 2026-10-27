@@ -1,0 +1,95 @@
+{
+  "checks": [
+    {
+      "resourceId": "a613b046b0f1829e0a014a45425f2229",
+      "nodeTitle": "mcp-toolbar-fixture.png",
+      "width": 128,
+      "height": 64,
+      "passed": true,
+      "localFilesMatchedByDimensionsBytesAndPixels": [
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\cae38422dbe79478d5a176fde2cc853a.png"
+      ],
+      "sha256": "4316f51191ba50b7a955a33441e1ef7c997e3bb3591214a8a83595a330cf6f1e"
+    },
+    {
+      "resourceId": "04a77388c66bc474ae4f17a5e05a8cd0",
+      "nodeTitle": "mcp-toolbar-fixture.png · 裁剪",
+      "width": 64,
+      "height": 32,
+      "passed": true,
+      "localFilesMatchedByDimensionsBytesAndPixels": [
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\5a68e2af0730874db8ad922d5a7acae1.png",
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\760d8ae0b5dc48601a59e73fa63270bd.png"
+      ],
+      "sha256": "4e842337e50c7e1e4bbd131240423544da936d613f613f3308af8cde085c8483"
+    },
+    {
+      "resourceId": "c8e9efcf3f82904b678976bbb74f2aaf",
+      "nodeTitle": "mcp-toolbar-fixture.png · 宫格 1-1",
+      "width": 64,
+      "height": 32,
+      "passed": true,
+      "localFilesMatchedByDimensionsBytesAndPixels": [
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\5a68e2af0730874db8ad922d5a7acae1.png",
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\760d8ae0b5dc48601a59e73fa63270bd.png"
+      ],
+      "sha256": "4e842337e50c7e1e4bbd131240423544da936d613f613f3308af8cde085c8483"
+    },
+    {
+      "resourceId": "bd5d6db7f62c7c5e832597b3a1150cac",
+      "nodeTitle": "mcp-toolbar-fixture.png · 宫格 1-2",
+      "width": 64,
+      "height": 32,
+      "passed": true,
+      "localFilesMatchedByDimensionsBytesAndPixels": [
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\9cf8124aead1ba2688f18b25376e9eb6.png"
+      ],
+      "sha256": "ffc6b1d8cd4a99683e104827d7dd9dc5a72700be5e9f19aaa585cbf3e11bd3f7"
+    },
+    {
+      "resourceId": "3f20aeb254f7a334be2cfaacceca8d96",
+      "nodeTitle": "mcp-toolbar-fixture.png · 宫格 2-1",
+      "width": 64,
+      "height": 32,
+      "passed": true,
+      "localFilesMatchedByDimensionsBytesAndPixels": [
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\d80a649c4607a9ac63382656a18f0ef0.png"
+      ],
+      "sha256": "03f9e565280e0fc19ceea67503e97f9d113ba29f31b0bb27c86778b72eb9ac91"
+    },
+    {
+      "resourceId": "bee8cc5249dce8190ca521f87713c35d",
+      "nodeTitle": "mcp-toolbar-fixture.png · 宫格 2-2",
+      "width": 64,
+      "height": 32,
+      "passed": true,
+      "localFilesMatchedByDimensionsBytesAndPixels": [
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\a71fbbbcd240255ff8a89625fe10c605.png"
+      ],
+      "sha256": "8f8529cb184174f5e5ad9833378aafa259f25d582d42249f9f067d64f91618aa"
+    },
+    {
+      "resourceId": "17d13c6425a394c7526b0a5e92d83c5e",
+      "nodeTitle": "mcp-toolbar-fixture.png · 放大",
+      "width": 256,
+      "height": 128,
+      "passed": true,
+      "localFilesMatchedByDimensionsBytesAndPixels": [
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\d35d80f3fc946b713c1ad1dead9c0dd7.png"
+      ],
+      "sha256": "99a37fe75f08825681c7e0c14887b4f34d9a30bdfcea2bc73cbbcb2142095f3a"
+    },
+    {
+      "resourceId": "1dcf3d747b3604b5fcebdd8c0e4b319f",
+      "nodeTitle": "MCP验收 · 本地标注",
+      "width": 128,
+      "height": 64,
+      "passed": true,
+      "localFilesMatchedByDimensionsBytesAndPixels": [
+        "D:\\HU\\衍图便携版\\衍图便携版\\data\\resources\\users\\53913dd104b934c0af79240f3f8d5ad3\\image\\2026\\10\\07\\f1cce0d3243f44406f956627bc0e2745.png"
+      ],
+      "sha256": "0d46b86144db3d68498402a162a061572b056f8a4415356f0f3e90f7e678a8e2"
+    }
+  ],
+  "passed": 8
+}

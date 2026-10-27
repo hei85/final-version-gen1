@@ -1,0 +1,502 @@
+{
+  "at": "2026-10-07T01:41:12.587440+00:00",
+  "productionVersion": "1.5.0",
+  "files": [
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\SKILL.md",
+      "previousSha256": "b358eb3f66be4a539cdf779510266cea4f57812e1ff8c3258359389975342599",
+      "sha256": "0c8ba7ef6e91f7bb6e5bc7b64f95f0a9c10540b84d6b3e74730d49e9e5bd470c",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\6cb437a7ca1c8a311ff6d794143bcbe6b12c30ef69470f6edca4906fe7d73136.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\references\\fixed-space-workflow.md",
+      "previousSha256": "674c5c80f9d32c6292af23ea7264934fbaa04f54c86153d5e183d79ae3f46971",
+      "sha256": "7f0987d7078e1a454717904ebfd2de766f6a7e04aa965c0aa477319157520959",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\4d32c48f04b315c5cc501e9c67ec965db5f021b54bd90a36e109e1a1d4dd5356.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\references\\spatial-distance-continuity.md",
+      "previousSha256": null,
+      "sha256": "a3735ffb3f4db56cdcec8269baa77c8e68c2cf7c1908875ea4ff1ae7691c6570",
+      "backup": null
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\references\\script-to-film-automation.md",
+      "previousSha256": null,
+      "sha256": "c50b03bff438e1c42a965daece4cdc35a9c41ca3054ee78f5c4078533179e569",
+      "backup": null
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\references\\canvas-production-rules.md",
+      "previousSha256": "7927f3ccaa4105c5f16f14dbc4c4b574f3899da15d6ae639efe89610113a07e6",
+      "sha256": "365722cd2b298f19279cf09f4d9df289abf8f3fb4911cd052150439b1c5f890f",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\58f3e2183ba35278b5d6d2b58a022c073c7590eb0f4db66965c87baa65926724.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\references\\formal-production-workflow.md",
+      "previousSha256": "1110ed736306d8c85ad72aa1374aef0d2fc14af7aac0b51675154473fff3c14e",
+      "sha256": "f8f8e01c44890f42e2080b82f6e544b68073b5113c46557a923af5169195cab1",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\f45bdd3bf86b3d48c4570f1f40be1bb654a93e4ade237aeb6c4b504e9997dd6c.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\references\\video-continuity.md",
+      "previousSha256": "a473997db151835c0769459d34a247ad0feccc65937e2c41dbbd7ade5063d222",
+      "sha256": "a0f6717ad8a66c84e66f8d6d7a0fb4aca785a118bd2f17e1114745cd787a21e4",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\612ca666624fbb22cfdbb1ac585b4421099e74d5973d1c9d28a4962a4843f137.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\references\\image-prompting-quality.md",
+      "previousSha256": "c6afb78effb6c20b28d7b7099d6030df884837690b35effb277fd8ac2a5e7727",
+      "sha256": "685ee9f2adf708ecc3ba61aaac73340514eb4b3b4f74014a2461a332b84a598a",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\51dc904c989fee4d5b83502e00ecf76501b465d1f7940305bfbdd70782bbffa4.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\references\\agent-automation.md",
+      "previousSha256": "2dbb9ce3c764bfc18abd68ae0a28582fa6e2de9b1347ce8afac7c1ea1cf334d7",
+      "sha256": "5466e02cb22fbfb55eaab72dcbda119dd15d3fa602d8156c5c193ec6419bb7fe",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\618eb2484d70fe6eb29838a9dbc1bc4c0b4a68d908ba7698efc4f719646c3367.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\yingce-film-production\\references\\mcp-production.md",
+      "previousSha256": "87bba582ee34e2655ebb314e52f0394685a4384123cf625e4a62f06a9b2959d2",
+      "sha256": "f493fe95893c252c2439fdb2ccdb1f900ac8db241e570f72e1e75aff9b54e10e",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\488392f049b42f49d19b5b5b104def0f7bc95136fd6be8a2b35ce2585e4d13ea.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\SKILL.md",
+      "previousSha256": "b358eb3f66be4a539cdf779510266cea4f57812e1ff8c3258359389975342599",
+      "sha256": "0c8ba7ef6e91f7bb6e5bc7b64f95f0a9c10540b84d6b3e74730d49e9e5bd470c",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\205ffc661800a871e420c45c2c067f04d9a54feeecee6dec19ab430ffdff4153.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\references\\fixed-space-workflow.md",
+      "previousSha256": "674c5c80f9d32c6292af23ea7264934fbaa04f54c86153d5e183d79ae3f46971",
+      "sha256": "7f0987d7078e1a454717904ebfd2de766f6a7e04aa965c0aa477319157520959",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\c451623829ae8c994e152a2a77ec187f460eb8a57128a87254f0b907cc4d8ef1.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\references\\spatial-distance-continuity.md",
+      "previousSha256": null,
+      "sha256": "a3735ffb3f4db56cdcec8269baa77c8e68c2cf7c1908875ea4ff1ae7691c6570",
+      "backup": null
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\references\\script-to-film-automation.md",
+      "previousSha256": null,
+      "sha256": "c50b03bff438e1c42a965daece4cdc35a9c41ca3054ee78f5c4078533179e569",
+      "backup": null
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\references\\canvas-production-rules.md",
+      "previousSha256": "775f72c21d03a53eb693de76fbbed74e08495b79b8a40967e20b24d2b1b09a6a",
+      "sha256": "c84920b8e59cc790ff1ff7313cc01ecaf0b743e6e2d486ca33b249a94f4de0f2",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\fdc3baecd60e689358367d40b0c0b089df5b91e0ae5f3984be836a9f54afd73e.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\references\\formal-production-workflow.md",
+      "previousSha256": "1110ed736306d8c85ad72aa1374aef0d2fc14af7aac0b51675154473fff3c14e",
+      "sha256": "f8f8e01c44890f42e2080b82f6e544b68073b5113c46557a923af5169195cab1",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\c234d0398ec9bb5282cc4d0473668f1b339fa165552590546e650f2c590d6326.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\references\\video-continuity.md",
+      "previousSha256": "a473997db151835c0769459d34a247ad0feccc65937e2c41dbbd7ade5063d222",
+      "sha256": "a0f6717ad8a66c84e66f8d6d7a0fb4aca785a118bd2f17e1114745cd787a21e4",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\e610b5c329c9ea2d9cb984e86efaa7c5bf0da8f06b0842d7eecddf0341e0c036.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\references\\image-prompting-quality.md",
+      "previousSha256": "c6afb78effb6c20b28d7b7099d6030df884837690b35effb277fd8ac2a5e7727",
+      "sha256": "685ee9f2adf708ecc3ba61aaac73340514eb4b3b4f74014a2461a332b84a598a",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\29a42cbf3a7d9dc29ea0ae7fe4ba1f6da9b7467edd55b0848cb4e0baaa58ad49.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\references\\agent-automation.md",
+      "previousSha256": "2dbb9ce3c764bfc18abd68ae0a28582fa6e2de9b1347ce8afac7c1ea1cf334d7",
+      "sha256": "5466e02cb22fbfb55eaab72dcbda119dd15d3fa602d8156c5c193ec6419bb7fe",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\1218e375fc3d634c314b042b9f6e1b00db39ad1c6fc8347d146cf6e2c6212aef.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\yingce-film-production\\references\\mcp-production.md",
+      "previousSha256": "87bba582ee34e2655ebb314e52f0394685a4384123cf625e4a62f06a9b2959d2",
+      "sha256": "f493fe95893c252c2439fdb2ccdb1f900ac8db241e570f72e1e75aff9b54e10e",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\93be19245f45a6eb7d11e859ba6ece7d35b17664a1b68756faa781598eb38ab1.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\SKILL.md",
+      "previousSha256": "b358eb3f66be4a539cdf779510266cea4f57812e1ff8c3258359389975342599",
+      "sha256": "0c8ba7ef6e91f7bb6e5bc7b64f95f0a9c10540b84d6b3e74730d49e9e5bd470c",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\b32f39af53bb71de1391a1afe7489c7b3ecb93be49fa2ecc8aa4680c0454c6d1.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\references\\fixed-space-workflow.md",
+      "previousSha256": "674c5c80f9d32c6292af23ea7264934fbaa04f54c86153d5e183d79ae3f46971",
+      "sha256": "7f0987d7078e1a454717904ebfd2de766f6a7e04aa965c0aa477319157520959",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\fc5584bd126d8dcf65e49a54244bec9b1dffe18571eb9d07e106866849d26240.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\references\\spatial-distance-continuity.md",
+      "previousSha256": null,
+      "sha256": "a3735ffb3f4db56cdcec8269baa77c8e68c2cf7c1908875ea4ff1ae7691c6570",
+      "backup": null
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\references\\script-to-film-automation.md",
+      "previousSha256": null,
+      "sha256": "c50b03bff438e1c42a965daece4cdc35a9c41ca3054ee78f5c4078533179e569",
+      "backup": null
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\references\\canvas-production-rules.md",
+      "previousSha256": "766f7436639231282335ee3dcc8b5cfe9c649c2c2555f4ca2ee1e990b588f0b0",
+      "sha256": "c7c160faa14c338275248ea3538e5baad529e0d8b7eb7c1767fd603e4d2f9e5f",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\548cf9d10e1298448420bcfc76c1fdb7b202d61f32ce9d3ed9401637f57ba85a.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\references\\formal-production-workflow.md",
+      "previousSha256": "1110ed736306d8c85ad72aa1374aef0d2fc14af7aac0b51675154473fff3c14e",
+      "sha256": "f8f8e01c44890f42e2080b82f6e544b68073b5113c46557a923af5169195cab1",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\2fe5fb585a7a2a664d87b1060494030ea18e95a4b68aeedd4c484c9c9db9bf2b.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\references\\video-continuity.md",
+      "previousSha256": "a473997db151835c0769459d34a247ad0feccc65937e2c41dbbd7ade5063d222",
+      "sha256": "a0f6717ad8a66c84e66f8d6d7a0fb4aca785a118bd2f17e1114745cd787a21e4",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\31be604c01fdd95fa253b95e7da5a9a1afb15e53c333e33fc9f5031e108b824d.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\references\\image-prompting-quality.md",
+      "previousSha256": "c6afb78effb6c20b28d7b7099d6030df884837690b35effb277fd8ac2a5e7727",
+      "sha256": "685ee9f2adf708ecc3ba61aaac73340514eb4b3b4f74014a2461a332b84a598a",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\1d0fef6eb35312d8190fff804c5e0a41399a4aaab2056e33707db25a5652689a.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\references\\agent-automation.md",
+      "previousSha256": "2dbb9ce3c764bfc18abd68ae0a28582fa6e2de9b1347ce8afac7c1ea1cf334d7",
+      "sha256": "5466e02cb22fbfb55eaab72dcbda119dd15d3fa602d8156c5c193ec6419bb7fe",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\85d751825077b12538652b568ba7524dc8b01b850e6eb0a9709ddd4c41626f73.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\yingce-film-production\\references\\mcp-production.md",
+      "previousSha256": "87bba582ee34e2655ebb314e52f0394685a4384123cf625e4a62f06a9b2959d2",
+      "sha256": "f493fe95893c252c2439fdb2ccdb1f900ac8db241e570f72e1e75aff9b54e10e",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\4461c722a2cf100cc60adb108eb3cb0d145c4492e8d9bd6104822c102be84b7e.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\SKILL.md",
+      "previousSha256": "b358eb3f66be4a539cdf779510266cea4f57812e1ff8c3258359389975342599",
+      "sha256": "0c8ba7ef6e91f7bb6e5bc7b64f95f0a9c10540b84d6b3e74730d49e9e5bd470c",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\09393a739f77cc4defc66ffee35a07b27dc3b959e85a48915d1c6edf4b6df9c6.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\references\\fixed-space-workflow.md",
+      "previousSha256": "674c5c80f9d32c6292af23ea7264934fbaa04f54c86153d5e183d79ae3f46971",
+      "sha256": "7f0987d7078e1a454717904ebfd2de766f6a7e04aa965c0aa477319157520959",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\472a3633680aa3f0af6505076cdab94c0dd2f9619a9f20e15c7bd2fc9b0b16b4.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\references\\spatial-distance-continuity.md",
+      "previousSha256": null,
+      "sha256": "a3735ffb3f4db56cdcec8269baa77c8e68c2cf7c1908875ea4ff1ae7691c6570",
+      "backup": null
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\references\\script-to-film-automation.md",
+      "previousSha256": null,
+      "sha256": "c50b03bff438e1c42a965daece4cdc35a9c41ca3054ee78f5c4078533179e569",
+      "backup": null
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\references\\canvas-production-rules.md",
+      "previousSha256": "7927f3ccaa4105c5f16f14dbc4c4b574f3899da15d6ae639efe89610113a07e6",
+      "sha256": "365722cd2b298f19279cf09f4d9df289abf8f3fb4911cd052150439b1c5f890f",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\846ffbc6afb86e041b8ec1967d11654ab29ae16d9e8e1755b244c76d155db22d.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\references\\formal-production-workflow.md",
+      "previousSha256": "1110ed736306d8c85ad72aa1374aef0d2fc14af7aac0b51675154473fff3c14e",
+      "sha256": "f8f8e01c44890f42e2080b82f6e544b68073b5113c46557a923af5169195cab1",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\90d02ea80a2b0ec8a9b723573fd2412d2e54a6c9b0f35ba11b2250251cb95f31.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\references\\video-continuity.md",
+      "previousSha256": "a473997db151835c0769459d34a247ad0feccc65937e2c41dbbd7ade5063d222",
+      "sha256": "a0f6717ad8a66c84e66f8d6d7a0fb4aca785a118bd2f17e1114745cd787a21e4",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\cc34eb21bb4a558e5824fdb708d3f0046df4c63c3cfb845e552e753761085e9f.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\references\\image-prompting-quality.md",
+      "previousSha256": "c6afb78effb6c20b28d7b7099d6030df884837690b35effb277fd8ac2a5e7727",
+      "sha256": "685ee9f2adf708ecc3ba61aaac73340514eb4b3b4f74014a2461a332b84a598a",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\6ecb0b80df2d214aa8945a0f7ec4ba5f421e6c598022e2a33fc065b806e6e85e.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\references\\agent-automation.md",
+      "previousSha256": "2dbb9ce3c764bfc18abd68ae0a28582fa6e2de9b1347ce8afac7c1ea1cf334d7",
+      "sha256": "5466e02cb22fbfb55eaab72dcbda119dd15d3fa602d8156c5c193ec6419bb7fe",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\b71031df58d1a6319c217b20946394e59e9a2d3e4eee9c54e41984eb950ec66c.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\yingce-film-production\\references\\mcp-production.md",
+      "previousSha256": "87bba582ee34e2655ebb314e52f0394685a4384123cf625e4a62f06a9b2959d2",
+      "sha256": "f493fe95893c252c2439fdb2ccdb1f900ac8db241e570f72e1e75aff9b54e10e",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\fd2e7cbe95a2b65e3760edebd5d68f3c5d4b061c69ac0bae0593810835c5fe85.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\canvas\\SKILL.md",
+      "previousSha256": "04e39170e718f8b007de7d1c930d09e15d77ec5df8182dc1e8da0124c66719c3",
+      "sha256": "400e0ee71bb7406ff1ed180eec0c0e63f71ada27ffa69ed7284b8c1e6414383c",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\379f1bd07b8fa7ed28371df5c3f7fdd7e28eb137354e4ecf08df4b9b9bb931c8.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\asset-aware-generation\\SKILL.md",
+      "previousSha256": "06d0024d83015d76f6e390bfb2c57590629baf6b5fbe0925c0557e1f4670d911",
+      "sha256": "ac4a9e5fe9806e3ef2b92195c235a8af083dc1e8047f616bfbe968e746c6a454",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\0898c9b968302e8c45e040b05ca5b2a311d65707d5ee5f248d0a490abfedf630.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\canvas-editing\\references\\specialized-editing.md",
+      "previousSha256": "590b2a52820b42160583de75c6f5cb5575051adb63fc8d66f96df68a8f7425ee",
+      "sha256": "d96c335a4902844bee37e4f8ac8f62d121c08320b0bf9a6075970403c0ccbe2e",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\dc0b4ac416a74e7e8e097b19f265c389ced48f94cdfb3a458a5f74fee0b2af14.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\canvas\\SKILL.md",
+      "previousSha256": "04e39170e718f8b007de7d1c930d09e15d77ec5df8182dc1e8da0124c66719c3",
+      "sha256": "400e0ee71bb7406ff1ed180eec0c0e63f71ada27ffa69ed7284b8c1e6414383c",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\bdb592c8ed9fb073edf37416a8ffae92c0d6d68a5d06092866e61a787a046de6.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\asset-aware-generation\\SKILL.md",
+      "previousSha256": "06d0024d83015d76f6e390bfb2c57590629baf6b5fbe0925c0557e1f4670d911",
+      "sha256": "ac4a9e5fe9806e3ef2b92195c235a8af083dc1e8047f616bfbe968e746c6a454",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\3b8d23f7b2ee2a006d6bd5e8c8962f4599303b964b8a4d5d1e320affd6d8547b.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\plugins\\cache\\yingce-local\\yingce\\0.1.0\\skills\\canvas-editing\\references\\specialized-editing.md",
+      "previousSha256": "590b2a52820b42160583de75c6f5cb5575051adb63fc8d66f96df68a8f7425ee",
+      "sha256": "d96c335a4902844bee37e4f8ac8f62d121c08320b0bf9a6075970403c0ccbe2e",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\fdff9c4df1663782d04163cee7e93a4ad08239453acb32b108e35518da7dadea.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\canvas\\SKILL.md",
+      "previousSha256": "04e39170e718f8b007de7d1c930d09e15d77ec5df8182dc1e8da0124c66719c3",
+      "sha256": "400e0ee71bb7406ff1ed180eec0c0e63f71ada27ffa69ed7284b8c1e6414383c",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\437e02ecdbfbdca0866e675760e92764a3c6979995953404e62fb46fd0ebecbf.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\asset-aware-generation\\SKILL.md",
+      "previousSha256": "06d0024d83015d76f6e390bfb2c57590629baf6b5fbe0925c0557e1f4670d911",
+      "sha256": "ac4a9e5fe9806e3ef2b92195c235a8af083dc1e8047f616bfbe968e746c6a454",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\c1d157146483747dbb814ba562af540fcf0beb85037bfb81ccf7816543a5b7fc.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\衍图插件\\canvas-editing\\references\\specialized-editing.md",
+      "previousSha256": "590b2a52820b42160583de75c6f5cb5575051adb63fc8d66f96df68a8f7425ee",
+      "sha256": "d96c335a4902844bee37e4f8ac8f62d121c08320b0bf9a6075970403c0ccbe2e",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\4890d52ad796b889416208bcf194e60b00fcb959992e521142ff40b68cb8e421.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\prompt-writter\\SKILL.md",
+      "previousSha256": "9e239196d64a053ae09240f35a26fc701a15e93a503196b35957b82f0b1c34dc",
+      "sha256": "0f94ebdb74946b4783f7c1799195b2276bee72b5cf496f6a197e5ff81c56117b",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\bfbdf9c2a51f2d79de0fde0bf5ab6f9ab553005c7d5031209064b84652b59347.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\辅助\\prompt-writter\\SKILL.md",
+      "previousSha256": "4b53bb1ee794fe1c54ce061173e1f104fc7e7fae09617da5d5f6ec83f105ad02",
+      "sha256": "9a6c1092f6dd669d37939afdc520c1e44ae936c5d43558519673ae83f39410f9",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\f39b7899668540ee37da3435837998bb1540143ea3d3d1316da33b7e23f0ee80.original"
+    },
+    {
+      "path": "C:\\Users\\q1775\\.codex\\skills\\character-scene-consistency\\SKILL.md",
+      "previousSha256": "a4d2976d97ccef9a610470a603b90485b694ad8a0b407b373e7998cead99a427",
+      "sha256": "1d8101511d922745b3ba9d1d2c432f705554a3c61e4230dbc64a4b5fbed8d7e0",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\014ff7af2fdc87c1668b6297a9d93235a7f578739afedf7ac05a6b31c11ccc8c.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\技能\\辅助\\character-scene-consistency\\SKILL.md",
+      "previousSha256": "388301431ebce37cb7dfd9fe46adef505bdd88965a4d3c7c7ff406e3892a3ad3",
+      "sha256": "9ce64e0934af01754f8da3a1241533ce887343694f7cd94241063affd058635d",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\9d81cf5359f39cd5ce061d1bb45be0f6d58be30f50ccfb90aa24834d0f7b2f92.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\AGENTS.md",
+      "previousSha256": "7a6cba947d2f957678ae7bdae85e326008e54dff0160ad0d52dd435fca45b24f",
+      "sha256": "ba8a379a470e96a15fb0a803b6a43876810b9a38137f9d28bb10b6cbc45a83a1",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\680e66bbe50adddaf719ba783c7d426748de8236a8cbc0db82d4e7b151b31f3e.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\规则\\便携软件AGENTS.md",
+      "previousSha256": "7a6cba947d2f957678ae7bdae85e326008e54dff0160ad0d52dd435fca45b24f",
+      "sha256": "ba8a379a470e96a15fb0a803b6a43876810b9a38137f9d28bb10b6cbc45a83a1",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\2d8b988beec456d3bc5a7862bacb8aa005a9bcfd61220e3df1cc7ca0d1ab0fe1.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\规则\\制作通用规则.md",
+      "previousSha256": "9f4a2046d298ca94fdc49e3816002fcda787ac7a14d613070dd4298057e330ec",
+      "sha256": "f9b64d354fdc1a95200cf17cb34c37f9504c66f422408c4f74e8c5d5f247fe5e",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\bca5968f42b029561827e4d57d301725aab7c898180a39dc4397b8d036238a69.original",
+      "intermediateSha256": "f54d15aec25b203fbb1d4789875873db5a2b565fb2dcb1b94ccfffade7eab09a"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\规则\\视频提示词与跨镜衔接.md",
+      "previousSha256": "758e549e46ab003498350d0cc7a9469e6fd123a231a444a10838357b0626e4a9",
+      "sha256": "9df7c75df0916dc625d2572447570d136310dd7b591f51c372c95558be6e5a98",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\6cbb29fadc064ed743706afe2d44920cb49e1f3177ffe76ffc6d810a2a37bd09.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\规则\\固定空间三步制作与机位.md",
+      "previousSha256": "674c5c80f9d32c6292af23ea7264934fbaa04f54c86153d5e183d79ae3f46971",
+      "sha256": "54adfcae1b1a15990859ef91cef1c2cf948a17a85d92b950edde6a60409d185b",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\c12a8e4e00c7245fa531a052c3fb03d2e5ecd4e5ac915aeffd57cfd2bc1248da.original"
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\docs\\固定空间三步制作与机位-20261007.md",
+      "previousSha256": "674c5c80f9d32c6292af23ea7264934fbaa04f54c86153d5e183d79ae3f46971",
+      "sha256": "f741a9565ab1f2f23aa7a7d5af7b1b0e03b2a5414d4b6a7cd977d1c93395bda2",
+      "backup": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\backup\\26ae61e3931e52feefc863e423686e841ecc25d4abfc7e54bd483bc9d8601d82.original"
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\规则\\空间距离与连续性.md",
+      "previousSha256": null,
+      "sha256": "a3735ffb3f4db56cdcec8269baa77c8e68c2cf7c1908875ea4ff1ae7691c6570",
+      "backup": null
+    },
+    {
+      "path": "D:\\HU\\workspace\\output\\衍图制作规则与项目迁移包-20261005\\规则\\剧本到成片自动化工作流.md",
+      "previousSha256": null,
+      "sha256": "467651d98f3f28db1f585e592c0b7befeb40bdc21fd5fc885c49e08e6af7562e",
+      "backup": null
+    }
+  ],
+  "softwarePackage": "D:\\HU\\workspace\\output\\workflow-learning-20261007\\yingce-film-production-v1.5.0.zip",
+  "softwarePackageSha256": "11fcc6d9dfa4ce1cef34d8cd0a90c0c08245d6746ea54330492e30820eb46e6f",
+  "softwarePackagePublished": true,
+  "softwareTestsRun": false,
+  "paidGenerationSubmitted": false,
+  "adoptedMediaModified": false,
+  "softwareUpdate": {
+    "at": "2026-10-07T01:41:38.007Z",
+    "portableRoot": "D:\\HU\\衍图便携版\\衍图便携版",
+    "skillId": "c85a288da84a24aa8174042d0d61d1a4",
+    "previousVersionId": "532102aaa3430aec5cf62e801f847104",
+    "versionId": "2e7afe25f6bf397d6fee9a2158b5749a",
+    "version": "1.5.0",
+    "contentHash": "2ac50bbf16f94abe7abc675a69b270547f031fb3cc95452f9c948617de95048d",
+    "files": [
+      {
+        "path": "SKILL.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 7866,
+        "sha256": "0c8ba7ef6e91f7bb6e5bc7b64f95f0a9c10540b84d6b3e74730d49e9e5bd470c"
+      },
+      {
+        "path": "agents/openai.yaml",
+        "kind": "code",
+        "mimeType": "text/plain; charset=utf-8",
+        "size": 326,
+        "sha256": "c6ac4f082dafc58907b2e9d2bce532bee49ab777a3288e9532e481d7f6f61a5f"
+      },
+      {
+        "path": "references/agent-automation.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 6936,
+        "sha256": "5466e02cb22fbfb55eaab72dcbda119dd15d3fa602d8156c5c193ec6419bb7fe"
+      },
+      {
+        "path": "references/canvas-production-rules.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 33710,
+        "sha256": "365722cd2b298f19279cf09f4d9df289abf8f3fb4911cd052150439b1c5f890f"
+      },
+      {
+        "path": "references/edit-deliver.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 2462,
+        "sha256": "f58ccd11a398e4b3054f3665391b1056123064c1de83f145a1ccfe60ced16e26"
+      },
+      {
+        "path": "references/fixed-space-workflow.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 13722,
+        "sha256": "7f0987d7078e1a454717904ebfd2de766f6a7e04aa965c0aa477319157520959"
+      },
+      {
+        "path": "references/formal-production-workflow.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 13102,
+        "sha256": "f8f8e01c44890f42e2080b82f6e544b68073b5113c46557a923af5169195cab1"
+      },
+      {
+        "path": "references/image-prompting-quality.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 4083,
+        "sha256": "685ee9f2adf708ecc3ba61aaac73340514eb4b3b4f74014a2461a332b84a598a"
+      },
+      {
+        "path": "references/mcp-production.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 12026,
+        "sha256": "f493fe95893c252c2439fdb2ccdb1f900ac8db241e570f72e1e75aff9b54e10e"
+      },
+      {
+        "path": "references/script-to-film-automation.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 8138,
+        "sha256": "c50b03bff438e1c42a965daece4cdc35a9c41ca3054ee78f5c4078533179e569"
+      },
+      {
+        "path": "references/spatial-distance-continuity.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 5985,
+        "sha256": "a3735ffb3f4db56cdcec8269baa77c8e68c2cf7c1908875ea4ff1ae7691c6570"
+      },
+      {
+        "path": "references/video-continuity.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 10775,
+        "sha256": "a0f6717ad8a66c84e66f8d6d7a0fb4aca785a118bd2f17e1114745cd787a21e4"
+      },
+      {
+        "path": "references/voices-dialogue.md",
+        "kind": "markdown",
+        "mimeType": "text/markdown; charset=utf-8",
+        "size": 5097,
+        "sha256": "c6fee16d46a26a746458ef4dd10565dab0e0cb6807b9e9138d6f8b817b62d384"
+      }
+    ]
+  },
+  "readbackComparisons": [
+    {
+      "path": "SKILL.md",
+      "sha256": "0c8ba7ef6e91f7bb6e5bc7b64f95f0a9c10540b84d6b3e74730d49e9e5bd470c",
+      "activeCopies": 4,
+      "mcpComplete": true
+    },
+    {
+      "path": "references/spatial-distance-continuity.md",
+      "sha256": "a3735ffb3f4db56cdcec8269baa77c8e68c2cf7c1908875ea4ff1ae7691c6570",
+      "activeCopies": 4,
+      "mcpComplete": true
+    },
+    {
+      "path": "references/script-to-film-automation.md",
+      "sha256": "c50b03bff438e1c42a965daece4cdc35a9c41ca3054ee78f5c4078533179e569",
+      "activeCopies": 4,
+      "mcpComplete": true
+    }
+  ],
+  "effectiveCatalogRevision": "7f37f63a"
+}

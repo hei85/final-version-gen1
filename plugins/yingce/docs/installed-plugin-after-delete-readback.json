@@ -1,0 +1,89 @@
+{
+  "at": "2026-10-07T03:06:42.659Z",
+  "configuredCommand": "D:\\HU\\衍图便携版\\衍图便携版\\runtime\\node.exe",
+  "newToolsRegistered": 8,
+  "oldDirectoryRemainingItems": 0,
+  "records": [
+    {
+      "name": "runtime_diagnostics",
+      "result": {
+        "ok": true,
+        "buildId": "sha256:0d5f01fc1fc16ccf4699d85aaa1c26546cd6c33c76fdc004a1f8a6f8afb79ac7",
+        "version": "0.1.0",
+        "toolsetVersion": "yingce-mcp-v3",
+        "schemaVersion": 3,
+        "process": {
+          "node": "v24.18.0",
+          "platform": "win32",
+          "arch": "x64",
+          "pid": 21684
+        },
+        "runtime": {
+          "url": "http://127.0.0.1:17371",
+          "connected": true,
+          "clients": 1,
+          "hasCanvas": true
+        },
+        "binding": {
+          "canvasId": "fexNxUPldMDnX-DQBsos0",
+          "domainProjectId": "",
+          "revision": 280,
+          "stateHash": "7de3d4f3f9a5e870",
+          "selectedNodeIds": []
+        },
+        "capabilities": {
+          "canvas": true,
+          "skills": true,
+          "modelProfiles": true,
+          "shortTaskPolling": true,
+          "mediaProbe": true,
+          "serverTimelineRender": true
+        }
+      }
+    },
+    {
+      "name": "canvas_get_context",
+      "result": {
+        "schemaVersion": 1,
+        "revision": 280,
+        "stateHash": "7de3d4f3f9a5e870",
+        "canvas": {
+          "projectId": "fexNxUPldMDnX-DQBsos0",
+          "title": "自由画布 11",
+          "viewport": {
+            "x": 396.01778025833585,
+            "y": 234.0516604238988,
+            "k": 0.13933426546514094
+          },
+          "nodeCount": 110,
+          "connectionCount": 261,
+          "selectedNodeCount": 0,
+          "nodeTypeCounts": {
+            "text": 1,
+            "frame": 5,
+            "image": 92,
+            "script": 1,
+            "video": 11
+          }
+        },
+        "warnings": [],
+        "detail": "summary",
+        "selection": [],
+        "omitted": {
+          "nodes": 110,
+          "connections": 261,
+          "resources": 103,
+          "selection": 0
+        },
+        "nextTools": [
+          "canvas_find_nodes",
+          "canvas_get_node",
+          "canvas_get_connection",
+          "canvas_get_storyboard",
+          "canvas_get_generation_tasks",
+          "canvas_get_resources"
+        ]
+      }
+    }
+  ]
+}

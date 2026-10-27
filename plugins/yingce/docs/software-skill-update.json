@@ -1,0 +1,109 @@
+{
+  "at": "2026-10-07T02:46:37.277Z",
+  "portableRoot": "D:\\HU\\衍图便携版\\衍图便携版",
+  "skillId": "c85a288da84a24aa8174042d0d61d1a4",
+  "previousVersionId": "2e7afe25f6bf397d6fee9a2158b5749a",
+  "versionId": "fc82dd8c753e2eb75c6d5ae92589f3bd",
+  "version": "1.5.1",
+  "contentHash": "b936c18bfd6306dcd0da2a0dba13de133b12e22888cc3e6cff894dd6245d855a",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 8154,
+      "sha256": "b06372d1449911d54f089d4a9fed92a9ac1781d36aa9946f6e4756ac2fde91c4"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "code",
+      "mimeType": "text/plain; charset=utf-8",
+      "size": 326,
+      "sha256": "c6ac4f082dafc58907b2e9d2bce532bee49ab777a3288e9532e481d7f6f61a5f"
+    },
+    {
+      "path": "references/agent-automation.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 6936,
+      "sha256": "5466e02cb22fbfb55eaab72dcbda119dd15d3fa602d8156c5c193ec6419bb7fe"
+    },
+    {
+      "path": "references/canvas-production-rules.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 33710,
+      "sha256": "365722cd2b298f19279cf09f4d9df289abf8f3fb4911cd052150439b1c5f890f"
+    },
+    {
+      "path": "references/edit-deliver.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 2462,
+      "sha256": "f58ccd11a398e4b3054f3665391b1056123064c1de83f145a1ccfe60ced16e26"
+    },
+    {
+      "path": "references/fixed-space-workflow.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 13722,
+      "sha256": "7f0987d7078e1a454717904ebfd2de766f6a7e04aa965c0aa477319157520959"
+    },
+    {
+      "path": "references/formal-production-workflow.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 13102,
+      "sha256": "f8f8e01c44890f42e2080b82f6e544b68073b5113c46557a923af5169195cab1"
+    },
+    {
+      "path": "references/image-prompting-quality.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 4083,
+      "sha256": "685ee9f2adf708ecc3ba61aaac73340514eb4b3b4f74014a2461a332b84a598a"
+    },
+    {
+      "path": "references/image-toolbar-tools.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 5386,
+      "sha256": "b15741c1fe8ff65154fdb721424dbaf81ddd8f4073961283f03be4d947fa23cf"
+    },
+    {
+      "path": "references/mcp-production.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 12026,
+      "sha256": "f493fe95893c252c2439fdb2ccdb1f900ac8db241e570f72e1e75aff9b54e10e"
+    },
+    {
+      "path": "references/script-to-film-automation.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 8138,
+      "sha256": "c50b03bff438e1c42a965daece4cdc35a9c41ca3054ee78f5c4078533179e569"
+    },
+    {
+      "path": "references/spatial-distance-continuity.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 5985,
+      "sha256": "a3735ffb3f4db56cdcec8269baa77c8e68c2cf7c1908875ea4ff1ae7691c6570"
+    },
+    {
+      "path": "references/video-continuity.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 10775,
+      "sha256": "a0f6717ad8a66c84e66f8d6d7a0fb4aca785a118bd2f17e1114745cd787a21e4"
+    },
+    {
+      "path": "references/voices-dialogue.md",
+      "kind": "markdown",
+      "mimeType": "text/markdown; charset=utf-8",
+      "size": 5097,
+      "sha256": "c6fee16d46a26a746458ef4dd10565dab0e0cb6807b9e9138d6f8b817b62d384"
+    }
+  ]
+}

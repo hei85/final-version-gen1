@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "yingce": {
+      "command": "pwsh",
+      "cwd": ".",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", ".\\scripts\\start-mcp.ps1"],
+      "startup_timeout_sec": 20,
+      "tool_timeout_sec": 720
+    }
+  }
+}

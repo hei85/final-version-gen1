@@ -1,0 +1,444 @@
+import { useRef, useState } from "react";
+import { Alert, App, Button, Form, Input, Segmented, Select, Switch, Tabs } from "antd";
+import { AdminModal } from "@/pages/admin/ui/overlays";
+import { FlaskConical, Plus } from "lucide-react";
+import { ModelIconPicker } from "@/components/model-logo";
+import { ModelIcon } from "@/components/model-picker";
+import { ModelProtocolBrowser } from "@/components/model-protocol-browser";
+import { ModelCapabilityEditor } from "@/components/model-capability-editor";
+import { defaultAudioCapabilityConfig, defaultModelCapabilityConfig, normalizeModelCapabilityConfig, type AudioCapabilityConfig, type ModelCapabilityConfig } from "@/lib/model-capabilities";
+import type { ModelProtocolDefinition } from "@/lib/model-protocols";
+import { createAdminChannelModel, testAdminChannelModel, updateAdminChannelModel, type ChannelModel } from "@/services/api/channel-models";
+import type { ModelChannel } from "@/stores/use-config-store";
+import { changeChannelModelCapability, editorSectionForField, initialChannelModelValues, validateChannelModelProtocol, type ChannelModelFormValues as FormValues, type EditorSection } from "./channel-model-editor-form";
+
+export function ChannelModelEditor({
+    channel,
+    editing,
+    protocols,
+    protocolLoading,
+    protocolError,
+    onRetryProtocols,
+    onClose,
+    onSaved,
+}: {
+    channel: ModelChannel;
+    editing: ChannelModel | null;
+    protocols: ModelProtocolDefinition[];
+    protocolLoading: boolean;
+    protocolError: string;
+    onRetryProtocols: () => void;
+    onClose: () => void;
+    onSaved: () => Promise<void>;
+}) {
+    const { message, modal } = App.useApp();
+    const [form] = Form.useForm<FormValues>();
+    const [initialValues] = useState(() => initialChannelModelValues(editing, protocols));
+    const [activeSection, setActiveSection] = useState<EditorSection>("identity");
+    const [saving, setSaving] = useState(false);
+    const [testing, setTesting] = useState(false);
+    const [configurationChanged, setConfigurationChanged] = useState(false);
+    const busyRef = useRef(false);
+    const dirtyRef = useRef(false);
+    const modelCapability = Form.useWatch("capability", form);
+    const modelProtocol = Form.useWatch("protocol", form);
+    const modelKey = Form.useWatch("modelKey", form) || "";
+    const providerModelKey = Form.useWatch("providerModelKey", form) || "";
+    const capabilityConfig = Form.useWatch("capabilityConfig", form);
+    const modelEnabled = Form.useWatch("enabled", form) !== false;
+    const modelUpstream = String(providerModelKey || modelKey || "").trim();
+    const busy = saving || testing;
+
+    const requestClose = () => {
+        if (busyRef.current) return;
+        if (!dirtyRef.current) {
+            onClose();
+            return;
+        }
+        modal.confirm({ title: "放弃未保存的修改？", content: "当前修改尚未保存，关闭后将丢弃。", okText: "放弃修改", cancelText: "继续编辑", onOk: onClose });
+    };
+
+    const handleFormValuesChange = (changed: Partial<FormValues>) => {
+        dirtyRef.current = true;
+        if (changed.capability) {
+            form.setFieldsValue(changeChannelModelCapability(form.getFieldsValue(true), protocols));
+            setConfigurationChanged(true);
+        } else if (changed.protocol) {
+            form.setFieldValue("capabilityConfig", modelCapability === "audio" ? { version: 1, audio: defaultAudioCapabilityConfig() } : defaultModelCapabilityConfig(changed.protocol, providerModelKey.trim() || modelKey.trim()));
+            setConfigurationChanged(true);
+        }
+    };
+
+    const validateEditor = async (names?: string[]): Promise<FormValues | undefined> => {
+        busyRef.current = true;
+        try {
+            await form.validateFields(names);
+            return form.getFieldsValue(true);
+        } catch (error) {
+            const fields = (error as { errorFields?: { name: (string | number)[] }[] }).errorFields;
+            if (fields?.length) {
+                setActiveSection(editorSectionForField(fields[0].name));
+                requestAnimationFrame(() => form.scrollToField(fields[0].name, { block: "center", focus: true }));
+                message.warning("请检查标记的配置项后重试");
+            } else message.error(error instanceof Error ? error.message : "表单校验失败");
+            return undefined;
+        } finally {
+            busyRef.current = false;
+        }
+    };
+
+    const save = async () => {
+        if (busyRef.current) return;
+        const values = await validateEditor();
+        if (!values) return;
+        const upstreamModel = values.providerModelKey?.trim() || values.modelKey.trim();
+        const capabilityConfig = capabilityConfigFor(values.capability, values.capabilityConfig, values.protocol, upstreamModel);
+        busyRef.current = true;
+        setSaving(true);
+        try {
+            const payload = {
+                modelKey: values.modelKey.trim(),
+                providerModelKey: upstreamModel,
+                displayName: values.displayName?.trim() || values.modelKey.trim(),
+                channelLabel: values.channelLabel?.trim() || "",
+                description: values.description?.trim() || "",
+                icon: values.icon?.trim() || "",
+                capability: values.capability,
+                protocol: values.protocol,
+                enabled: values.enabled !== false,
+                capabilityConfig,
+                ...(editing?.capability === values.capability && editing.variants?.length ? {
+                    variants: editing.variants.map((variant) => ({
+                        selector: variant.selector,
+                        resolution: variant.resolution,
+                        videoSeconds: variant.videoSeconds,
+                        providerModelKey: variant.providerModelKey,
+                        enabled: variant.enabled,
+                    })),
+                } : {}),
+            };
+            if (editing) await updateAdminChannelModel(channel.id, editing.id, payload);
+            else await createAdminChannelModel(channel.id, payload);
+            try {
+                await onSaved();
+            } catch {
+                message.warning("模型已保存，但列表刷新失败，请手动刷新");
+            }
+            onClose();
+            message.success(editing ? "模型配置已更新" : "模型已添加");
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "保存模型失败");
+        } finally {
+            busyRef.current = false;
+            setSaving(false);
+        }
+    };
+
+    const testModel = async () => {
+        if (busyRef.current) return;
+        const values = await validateEditor(["modelKey", "providerModelKey", "capability", "protocol", "capabilityConfig"]);
+        if (!values) return;
+        const upstreamModel = values.providerModelKey?.trim() || values.modelKey.trim();
+        const capabilityConfig = capabilityConfigFor(values.capability, values.capabilityConfig, values.protocol, upstreamModel);
+        busyRef.current = true;
+        setTesting(true);
+        try {
+            const result = await testAdminChannelModel(channel.id, {
+                modelKey: values.modelKey.trim(),
+                providerModelKey: upstreamModel,
+                capability: values.capability,
+                protocol: values.protocol,
+                capabilityConfig,
+            });
+            message.success(`模型测试通过，耗时 ${(result.durationMs / 1000).toFixed(2)} 秒`);
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "模型测试失败");
+        } finally {
+            busyRef.current = false;
+            setTesting(false);
+        }
+    };
+
+    return (
+        <AdminModal
+            open
+            title={
+                <div className="admin-model-editor-title">
+                    <span>{editing ? "编辑模型" : "新增模型"}</span>
+                    <p>
+                        {channel.name} · {editing?.displayName || editing?.modelKey || "配置调用方式与参数"}
+                    </p>
+                </div>
+            }
+            width={1120}
+            centered
+            rootClassName="admin-modal-root admin-model-editor-modal"
+            mask={{ closable: false }}
+            keyboard={!busy}
+            closable={!busy}
+            onCancel={requestClose}
+            flush styles={{ body: { minHeight: 0, flex: 1 }, header: { margin: 0 }, footer: { margin: 0 } }}
+            footer={
+                <div className="admin-model-editor-footer-actions">
+                    <div className="admin-model-editor-footer-status">
+                        <Switch
+                            aria-label="启用模型"
+                            checked={modelEnabled}
+                            disabled={busy}
+                            onChange={(checked) => {
+                                dirtyRef.current = true;
+                                form.setFieldValue("enabled", checked);
+                            }}
+                        />
+                        <div>
+                            <strong>{modelEnabled ? "模型启用" : "模型停用"}</strong>
+                            <small>保存后生效</small>
+                        </div>
+                    </div>
+                    <div className="admin-model-editor-footer-primary">
+                        <Button
+                            icon={<FlaskConical className="size-4" />}
+                            loading={testing}
+                            disabled={saving || protocolLoading || Boolean(protocolError)}
+                            onClick={() => modal.confirm({ title: "测试模型连接？", content: "测试会向上游发送真实请求；不会保存当前修改。", okText: "开始测试", cancelText: "取消", onOk: testModel })}
+                        >
+                            测试模型
+                        </Button>
+                        <Button disabled={busy} onClick={requestClose}>
+                            取消
+                        </Button>
+                        <Button type="primary" loading={saving} disabled={testing || protocolLoading || Boolean(protocolError)} onClick={() => void save()}>
+                            {editing ? "保存修改" : "添加模型"}
+                        </Button>
+                    </div>
+                </div>
+            }
+        >
+            <Form className="admin-model-editor-form" form={form} initialValues={initialValues} layout="vertical" disabled={busy} inert={busy} onValuesChange={handleFormValuesChange}>
+                <Form.Item name="capabilityConfig" noStyle>
+                    <CapabilityConfigField />
+                </Form.Item>
+                <Form.Item name="enabled" noStyle>
+                    <EnabledConfigField />
+                </Form.Item>
+                <Tabs
+                    activeKey={activeSection}
+                    onChange={(key) => setActiveSection(key as EditorSection)}
+                    animated={false}
+                    items={[
+                        {
+                            key: "identity",
+                            label: "基本信息",
+                            forceRender: true,
+                            children: (
+                                <div className="admin-model-editor-tab-content">
+                                    <section className="admin-model-editor-section">
+                                        <SectionHeading title="模型身份" description="区分产品侧展示标识与上游实际调用 ID。" />
+                                        <div className="admin-model-editor-section-content admin-model-identity-grid admin-model-identity-grid-with-icon">
+                                            <Form.Item name="modelKey" label="产品模型标识" tooltip="不同渠道使用相同标识时，创作端归为同一个产品模型。不同版本（例如 Fast）应使用不同标识；请勿为分组随意修改已有标识。" rules={[{ required: true, whitespace: true, message: "请输入产品模型标识" }]}>
+                                                <Input
+                                                    prefix={
+                                                        <span className="grid size-6 place-items-center">
+                                                            <ModelIcon model={modelKey} />
+                                                        </span>
+                                                    }
+                                                    placeholder="例如：seedance-2-5"
+                                                />
+                                            </Form.Item>
+                                            <Form.Item name="providerModelKey" label="上游模型 ID" tooltip="实际发送给供应商；留空时使用产品模型标识。规格档可配置独立上游 ID，命中时优先于此处。">
+                                                <Input placeholder="留空则使用产品模型标识" />
+                                            </Form.Item>
+                                            <Form.Item name="displayName" label="模型展示名（一级目录）" tooltip="跨所有系统渠道按此名称分组，例如 MiniMax H3。同名模型归入同一组，不改变调用 ID。">
+                                                <Input placeholder="不填则使用模型标识" />
+                                            </Form.Item>
+                                            <Form.Item name="channelLabel" label="渠道展示名（二级目录）" tooltip="此模型下的渠道选项，例如秘塔（满血渠道）。留空使用所属渠道名称。" rules={[{ max: 80, message: "渠道展示名不能超过 80 字" }]}>
+                                                <Input maxLength={80} placeholder="例如：正常渠道、优惠渠道-993、特惠渠道-730" />
+                                            </Form.Item>
+                                            <Form.Item name="icon" label="模型 Logo">
+                                                <ModelIconPicker />
+                                            </Form.Item>
+                                        </div>
+                                        <Form.Item name="description" label="模型描述" extra="在创作端二级渠道选项悬浮或聚焦时显示，可说明适用场景、渠道差异和注意事项。" rules={[{ max: 500, message: "模型描述不能超过 500 字" }]}>
+                                            <Input.TextArea rows={3} maxLength={500} showCount placeholder="填写此渠道模型的使用说明" />
+                                        </Form.Item>
+                                    </section>
+                                    <section className="admin-model-editor-section">
+                                        <SectionHeading title="能力与协议" description="先选任务类型，再选择对应的调用协议；更换后请核对参数与规格。" />
+                                        <div className="admin-model-editor-section-content admin-model-protocol-grid">
+                                            <Form.Item name="capability" label="模型能力" rules={[{ required: true }]}>
+                                                <Segmented
+                                                    block
+                                                    options={[
+                                                        { label: "文本", value: "text" },
+                                                        { label: "图片", value: "image" },
+                                                        { label: "视频", value: "video" },
+                                                        { label: "音频", value: "audio" },
+                                                    ]}
+                                                />
+                                            </Form.Item>
+                                            <Form.Item className="admin-model-protocol-field" name="protocol" label="调用协议" rules={[{ validator: async (_, value) => validateChannelModelProtocol(form.getFieldValue("capability"), value, protocols) }]}>
+                                                <ModelProtocolBrowser disabled={busy} capability={modelCapability} protocols={protocols} loading={protocolLoading} error={protocolError} />
+                                            </Form.Item>
+                                            {protocolError && (
+                                                <Alert
+                                                    type="error"
+                                                    showIcon
+                                                    title="协议目录读取失败"
+                                                    description={protocolError}
+                                                    action={
+                                                        <Button size="small" onClick={onRetryProtocols}>
+                                                            重试
+                                                        </Button>
+                                                    }
+                                                />
+                                            )}
+                                        </div>
+                                    </section>
+                                </div>
+                            ),
+                        },
+                        {
+                            key: "capabilities",
+                            label: "能力与参数",
+                            forceRender: true,
+                            children: (
+                                <div className="admin-model-editor-tab-content">
+                                    {configurationChanged && <Alert type="warning" showIcon title="能力或协议已变更" description="引用与参数已恢复为新协议默认值，旧规格条件已在切换能力时清除。请在保存前核对。" />}{" "}
+                                    {modelCapability === "text" || modelCapability === "image" || modelCapability === "video" ? (
+                                        <section className="admin-model-editor-section admin-model-editor-section-stacked admin-model-editor-references">
+                                            <SectionHeading title="引用与限制" description="按媒体类型纵向配置数量、大小、时长及通用约束。" />
+                                            <div className="admin-model-editor-section-content">
+                                                <ModelCapabilityEditor
+                                                    capability={modelCapability}
+                                                    model={providerModelKey || modelKey}
+                                                    protocol={form.getFieldValue("protocol")}
+                                                    section="references"
+                                                    value={capabilityConfig}
+                                                    onChange={(next) => {
+                                                        dirtyRef.current = true;
+                                                        form.setFieldValue("capabilityConfig", next);
+                                                    }}
+                                                />
+                                            </div>
+                                        </section>
+                                    ) : null}
+                                    {modelCapability === "text" || modelCapability === "image" || modelCapability === "video" ? (
+                                        <section className="admin-model-editor-section admin-model-editor-section-stacked admin-model-editor-parameters">
+                                            <SectionHeading title="协议参数" description="配置可发送参数、支持值与默认值；仅影响当前模型。" />
+                                            <div className="admin-model-editor-section-content">
+                                                <ModelCapabilityEditor
+                                                    capability={modelCapability}
+                                                    model={providerModelKey || modelKey}
+                                                    protocol={form.getFieldValue("protocol")}
+                                                    section="protocol"
+                                                    value={capabilityConfig}
+                                                    onChange={(next) => {
+                                                        dirtyRef.current = true;
+                                                        form.setFieldValue("capabilityConfig", next);
+                                                    }}
+                                                />
+                                            </div>
+                                        </section>
+                                    ) : null}
+                                    {modelCapability === "audio" && (
+                                        <section className="admin-model-editor-section admin-model-editor-section-stacked">
+                                            <SectionHeading title="音频能力目录" description="按当前上游模型的实际能力逐项声明；unknown 会阻止该用途进入制作计划，不按模型名称猜测。" />
+                                            <div className="admin-model-editor-section-content">
+                                                <AudioCapabilityEditor
+                                                    value={capabilityConfig?.audio || defaultAudioCapabilityConfig()}
+                                                    onChange={(audio) => {
+                                                        dirtyRef.current = true;
+                                                        form.setFieldValue("capabilityConfig", { version: 1, audio });
+                                                    }}
+                                                />
+                                            </div>
+                                        </section>
+                                    )}
+                                </div>
+                            ),
+                        },
+                    ]
+                        // 本地工作站把系统渠道当作「加 API 的地方」用：表单只保留调用协议与能力配置。
+                        .filter((item) => item.key !== "pricing")}
+                />
+            </Form>
+        </AdminModal>
+    );
+}
+
+function SectionHeading({ title, description }: { title: string; description: string }) {
+    return (
+        <header className="admin-model-editor-section-heading">
+            <h2>{title}</h2>
+            <p>{description}</p>
+        </header>
+    );
+}
+function capabilityConfigFor(capability: string, value: ModelCapabilityConfig | undefined, protocol: string | undefined, model: string) {
+    if (capability === "audio") return { version: 1, audio: { ...defaultAudioCapabilityConfig(), ...value?.audio } };
+    if (capability === "text" || capability === "image" || capability === "video") return normalizeModelCapabilityConfig(value || defaultModelCapabilityConfig(protocol, model));
+    return undefined;
+}
+
+const audioFeatureLabels: Array<[keyof Pick<AudioCapabilityConfig, "tts" | "voiceDesign" | "voiceReference" | "ambientSound" | "soundEffects" | "music" | "speechRecognition" | "alignment">, string]> = [
+    ["tts", "普通对白 / 旁白 TTS"],
+    ["voiceDesign", "固定角色音色 ID / Voice Design 能力"],
+    ["voiceReference", "按参考声音复用身份"],
+    ["ambientSound", "环境声"],
+    ["soundEffects", "Foley / 音效"],
+    ["music", "音乐 / BGM"],
+    ["speechRecognition", "语音识别"],
+    ["alignment", "字幕对齐"],
+];
+
+const audioParameterLabels: Array<[keyof Pick<AudioCapabilityConfig, "voiceIdParameter" | "referenceAudioParameter" | "toneParameter" | "emotionStyleParameter" | "speakingRateParameter" | "languageParameter" | "accentParameter">, string]> = [
+    ["voiceIdParameter", "上游 voice ID 字段"],
+    ["referenceAudioParameter", "上游参考音频字段"],
+    ["toneParameter", "上游音色描述字段"],
+    ["emotionStyleParameter", "上游情绪字段"],
+    ["speakingRateParameter", "上游语速字段"],
+    ["languageParameter", "上游语言字段"],
+    ["accentParameter", "上游口音字段"],
+];
+
+function AudioCapabilityEditor({ value, onChange }: { value: AudioCapabilityConfig; onChange: (value: AudioCapabilityConfig) => void }) {
+    const update = (patch: Partial<AudioCapabilityConfig>) => onChange({ ...value, ...patch });
+    return (
+        <div className="grid gap-3 md:grid-cols-2">
+            {audioFeatureLabels.map(([key, label]) => (
+                <label className="grid gap-1" key={key}>
+                    <span className="text-sm">{label}</span>
+                    <Select
+                        value={value[key]}
+                        options={[
+                            { value: "unknown", label: "未知（不可路由）" },
+                            { value: "configured", label: "已配置并可用" },
+                            { value: "unsupported", label: "明确不支持" },
+                        ]}
+                        onChange={(status) => update({ [key]: status })}
+                    />
+                </label>
+            ))}
+            {audioParameterLabels.map(([key, label]) => (
+                <label className="grid gap-1" key={key}>
+                    <span className="text-sm">{label}</span>
+                    <Input value={value[key] || ""} maxLength={80} onChange={(event) => update({ [key]: event.target.value })} />
+                </label>
+            ))}
+            <label className="grid gap-1 md:col-span-2">
+                <span className="text-sm">此模型实际支持的 Voice ID 列表</span>
+                <Select mode="tags" tokenSeparators={[","]} value={value.voiceIds || []} onChange={(voiceIds) => update({ voiceIds })} placeholder="只填上游已验证可用的 voice ID" />
+            </label>
+            <label className="grid gap-1">
+                <span className="text-sm">模型默认 Voice ID</span>
+                <Input value={value.defaultVoiceId || ""} maxLength={160} onChange={(event) => update({ defaultVoiceId: event.target.value })} />
+            </label>
+        </div>
+    );
+}
+function CapabilityConfigField(_: { value?: ModelCapabilityConfig; onChange?: (value: ModelCapabilityConfig) => void }) {
+    return null;
+}
+function EnabledConfigField(_: { value?: boolean; onChange?: (value: boolean) => void }) {
+    return null;
+}

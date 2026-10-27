@@ -1,0 +1,6 @@
+interface:
+  display_name: "衍图整片制作"
+  short_description: "通过衍图 MCP 按阶段生成、自检、修正和剪辑，完成剧本成片并保留进度"
+  default_prompt: "使用 $yingce-film-production，按我的剧本自主完成资产、真实 @ 引用、逐阶段自检、视频生成和剪辑，交付实际成片。"
+policy:
+  allow_implicit_invocation: true

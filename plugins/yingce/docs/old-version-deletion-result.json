@@ -1,0 +1,52 @@
+{
+  "at": "2026-10-07T03:05:03.0953388Z",
+  "deletedContentsOf": "D:\\1234",
+  "keptEmptyRoot": true,
+  "removedTopItems": 35,
+  "remainingItems": 0,
+  "stoppedOldProcessIds": [
+    33088
+  ],
+  "protectedRoot": "D:\\HU",
+  "protectedFiles": [
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\.codex-plugin\\plugin.json",
+      "sha256": "EBBB51A1547138981D9BA1CCE821094C3A80784E89B0D78FD93D287216245D59",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce\\skills\\canvas-editing\\SKILL.md",
+      "sha256": "3FAEDCFAE53CA634CAB5C8BF444125EF4C9B1087790C60365AF6EC7EBE27D0D7",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\canvas-agent\\dist\\schemas.js",
+      "sha256": "43A1D16FE906A91F5BAA97D485C125D85CDDF014F54D79124113E3D7196AE62F",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\web\\dist\\index.html",
+      "sha256": "731DE77C222CDC5CEFB78ACBE79FB729CF83C6DA18CDCE1BDAEE4A8FE76F6E97",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\HU\\衍图便携版\\衍图便携版\\runtime\\node.exe",
+      "sha256": "9A4EB5F1C29C6A2E93852EAD46B999E284A6A5CA8BAB4D4E241D587D025A52DE",
+      "unchanged": true
+    }
+  ],
+  "latestServices": [
+    {
+      "processId": 7864,
+      "running": true
+    },
+    {
+      "processId": 21684,
+      "running": true
+    },
+    {
+      "processId": 15820,
+      "running": true
+    }
+  ]
+}

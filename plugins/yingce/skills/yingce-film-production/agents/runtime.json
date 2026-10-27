@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "commonReads": [
+    "references/portable-agent-workflow.md",
+    "references/canvas-layout-and-split.md"
+  ],
+  "commonTools": [
+    "runtime_diagnostics",
+    "canvas_list_open_canvases",
+    "skill_read",
+    "film_get_run",
+    "film_self_check"
+  ],
+  "phaseReads": {
+    "planning": [
+      "references/formal-production-workflow.md",
+      "references/script-to-film-automation.md",
+      "references/shot-camera-continuity.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "brief": [
+      "references/formal-production-workflow.md"
+    ],
+    "script_breakdown": [
+      "references/formal-production-workflow.md"
+    ],
+    "visual_design": [
+      "references/fixed-space-workflow.md",
+      "references/spatial-distance-continuity.md",
+      "references/shot-camera-continuity.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "assets": [
+      "references/canvas-production-rules.md",
+      "references/self-check-workflow.md",
+      "references/image-toolbar-tools.md",
+      "references/visual-review-gate.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "keyframes": [
+      "references/canvas-production-rules.md",
+      "references/video-continuity.md",
+      "references/self-check-workflow.md",
+      "references/visual-review-gate.md",
+      "references/shot-camera-continuity.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "storyboard": [
+      "references/canvas-production-rules.md",
+      "references/video-continuity.md",
+      "references/visual-review-gate.md",
+      "references/shot-camera-continuity.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "sound_plan": [
+      "references/voices-dialogue.md"
+    ],
+    "pilot": [
+      "references/video-continuity.md",
+      "references/voices-dialogue.md",
+      "references/self-check-workflow.md",
+      "references/visual-review-gate.md",
+      "references/shot-camera-continuity.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "video": [
+      "references/video-continuity.md",
+      "references/voices-dialogue.md",
+      "references/self-check-workflow.md",
+      "references/visual-review-gate.md",
+      "references/shot-camera-continuity.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "consistency": [
+      "references/spatial-distance-continuity.md",
+      "references/video-continuity.md",
+      "references/self-check-workflow.md",
+      "references/visual-review-gate.md",
+      "references/shot-camera-continuity.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "editing": [
+      "references/edit-deliver.md",
+      "references/self-check-workflow.md",
+      "references/shot-camera-continuity.md"
+    ],
+    "delivery": [
+      "references/edit-deliver.md",
+      "references/self-check-workflow.md",
+      "references/shot-camera-continuity.md"
+    ],
+    "resume": [
+      "references/mcp-production.md",
+      "references/agent-automation.md",
+      "references/shot-camera-continuity.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "rough_storyboard": [
+      "references/formal-production-workflow.md",
+      "references/shot-camera-continuity.md",
+      "references/character-sheet-and-key-states.md"
+    ],
+    "locked_storyboard": [
+      "references/canvas-production-rules.md",
+      "references/video-continuity.md",
+      "references/shot-camera-continuity.md",
+      "references/visual-review-gate.md",
+      "references/character-sheet-and-key-states.md"
+    ]
+  },
+  "phaseTools": {
+    "planning": [
+      "project_create_from_script",
+      "film_list_models",
+      "film_create_run",
+      "film_authorize_run"
+    ],
+    "assets": [
+      "canvas_generate_image",
+      "canvas_get_resources"
+    ],
+    "keyframes": [
+      "canvas_generate_image",
+      "canvas_split_image",
+      "canvas_get_resources"
+    ],
+    "storyboard": [
+      "canvas_get_storyboard",
+      "canvas_update_storyboard"
+    ],
+    "pilot": [
+      "film_submit_step",
+      "film_wait_task",
+      "film_record_step_result"
+    ],
+    "video": [
+      "film_submit_step",
+      "film_wait_task",
+      "film_record_step_result"
+    ],
+    "editing": [
+      "canvas_get_timeline",
+      "canvas_apply_timeline_operation",
+      "film_render_timeline"
+    ],
+    "delivery": [
+      "film_verify_delivery"
+    ],
+    "resume": [
+      "film_get_tasks",
+      "film_wait_task"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "pluginId": "yingce@yingce-local",
+  "name": "yingce",
+  "marketplaceName": "yingce-local",
+  "version": "0.1.15",
+  "installed": true,
+  "enabled": true,
+  "source": {
+    "source": "local",
+    "path": "D:\\HU\\衍图便携版\\衍图便携版\\plugins\\yingce"
+  },
+  "marketplaceSource": {
+    "sourceType": "local",
+    "source": "\\\\?\\D:\\HU\\衍图便携版\\衍图便携版"
+  },
+  "installPolicy": "AVAILABLE",
+  "authPolicy": "ON_INSTALL"
+}
